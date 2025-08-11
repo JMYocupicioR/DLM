@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 export default function Footer() {
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border/40 py-6">
       <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-        <p>&copy; {year} DeepLuxMed.Mx. Todos los derechos reservados.</p>
+        <p>&copy; {year || new Date().getFullYear()} DeepLuxMed.Mx. Todos los derechos reservados.</p>
       </div>
     </footer>
   );
