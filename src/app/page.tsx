@@ -12,7 +12,7 @@ const services = [
     icon: <Scale className="w-10 h-10 text-accent" />,
     title: 'Escalas-DLM.com',
     description: 'Acceso a un completo repositorio de escalas médicas y herramientas de evaluación para un diagnóstico preciso.',
-    link: '#',
+    link: 'https://www.escalas-dlm.com',
   },
   {
     icon: <FileText className="w-10 h-10 text-accent" />,
