@@ -18,7 +18,7 @@ const services = [
     icon: <FileText className="w-10 h-10 text-accent" />,
     title: 'Expediente-DLM.com',
     description: 'Sistema de expediente clínico electrónico seguro y eficiente para optimizar la gestión de pacientes.',
-    link: '#',
+    link: 'https://expediente-dlm.netlify.app/',
   },
   {
     icon: <BrainCog className="w-10 h-10 text-accent" />,
