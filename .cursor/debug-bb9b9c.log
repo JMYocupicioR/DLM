@@ -1,0 +1,6 @@
+{"sessionId":"bb9b9c","location":"middleware.ts:15","message":"middleware entry","data":{"path":"/"},"hypothesisId":"A","timestamp":1771463564925}
+{"sessionId":"bb9b9c","location":"middleware.ts:46","message":"before getUser","data":{"path":"/"},"hypothesisId":"E","timestamp":1771463564928}
+{"sessionId":"bb9b9c","location":"middleware.ts:96","message":"middleware returning next","data":{"path":"/"},"hypothesisId":"A","timestamp":1771463564933}
+{"sessionId":"bb9b9c","location":"middleware.ts:50","message":"after getUser","data":{"path":"/","hasUser":false},"hypothesisId":"E","timestamp":1771463564932}
+{"sessionId":"bb9b9c","location":"layout.tsx:12","message":"layout render start","data":{},"hypothesisId":"B","timestamp":1771463570827}
+{"sessionId":"bb9b9c","location":"page.tsx:63","message":"Home render start","data":{},"hypothesisId":"C","timestamp":1771463570836}
