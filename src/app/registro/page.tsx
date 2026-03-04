@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Building2, Stethoscope, ArrowRight, CheckCircle2, Briefcase } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import DeepLuxLogo from '@/components/deeplux-logo';
 
 const registroOptions = [
   {
@@ -64,8 +65,7 @@ export default function RegistroPage() {
       <header className="py-6 px-4 border-b border-border/40">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-7 w-7 text-accent" />
-            <span className="font-headline text-xl font-bold">DeepLux</span>
+            <DeepLuxLogo size="md" />
           </Link>
           <span className="text-sm text-muted-foreground">
             ¿Ya tienes cuenta?{' '}
@@ -81,10 +81,10 @@ export default function RegistroPage() {
           {/* Title */}
           <div className="text-center mb-10">
             <h1 className="font-headline text-3xl md:text-4xl font-bold text-foreground mb-3">
-              Bienvenido a DeepLux
+              Bienvenido a DeepLux.org
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Crea tu cuenta en segundos. ¿Cómo quieres usar DeepLux?
+              Crea tu cuenta en segundos. ¿Cómo quieres usar DeepLux.org?
             </p>
           </div>
 
@@ -142,7 +142,7 @@ export default function RegistroPage() {
             <Link href="/legal/terminos" className="hover:underline text-accent">Términos de Servicio</Link>
             {' '}y la{' '}
             <Link href="/legal/privacidad" className="hover:underline text-accent">Política de Privacidad</Link>
-            {' '}de DeepLux.
+            {' '}de DeepLux.org.
           </p>
         </div>
       </main>

@@ -66,7 +66,7 @@ export default function AiAssistant() {
       <SheetContent className="flex flex-col">
         <SheetHeader>
           <SheetTitle className="font-headline flex items-center gap-2">
-            <Bot className="text-accent" /> Asistente IA de DeepLuxMed
+            <Bot className="text-accent" /> Asistente IA de DeepLux.org
           </SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex-1 my-4 pr-4">
@@ -76,7 +76,7 @@ export default function AiAssistant() {
                 <AvatarFallback><Bot size={20}/></AvatarFallback>
               </Avatar>
               <div className="bg-muted rounded-lg p-3 max-w-[80%]">
-                <p className="text-sm">¡Hola! Soy el asistente virtual de DeepLuxMed. ¿En qué puedo ayudarte hoy?</p>
+                <p className="text-sm">¡Hola! Soy el asistente virtual de DeepLux.org. ¿En qué puedo ayudarte hoy?</p>
               </div>
             </div>
             {messages.map((message, index) => (

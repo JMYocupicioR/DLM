@@ -18,6 +18,7 @@ import {
   Stethoscope, ArrowRight, ArrowLeft, CheckCircle2, Loader2,
   Hospital, Microscope, Building, Dumbbell, Building2
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 
 const TOTAL_STEPS = 8;
 
@@ -207,8 +208,7 @@ export default function RegistroClinicaPage() {
       <header className="py-4 px-4 border-b border-border/40">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-7 w-7 text-accent" />
-            <span className="font-headline text-xl font-bold">DeepLux</span>
+            <DeepLuxLogo size="md" />
           </Link>
           <span className="text-sm text-muted-foreground">Paso {Math.min(step, TOTAL_STEPS)} de {TOTAL_STEPS}</span>
         </div>

@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  CreditCard, ExternalLink, Calendar, Users, Stethoscope,
+  CreditCard, ExternalLink, Calendar, Users,
   ChevronRight, Briefcase, CheckCircle2, Lock, Building2
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { formatMXN } from '@/lib/utils';
 import { PLAN_BADGES } from '@/lib/constants';
 import { getUserRole } from '@/lib/user-role';
@@ -64,8 +65,7 @@ export default async function EmpresaDashboardPage() {
         <header className="border-b border-border/40 py-4 px-4">
           <div className="container mx-auto flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
-              <Stethoscope className="h-6 w-6 text-accent" />
-              <span className="font-headline text-lg font-bold">DeepLux</span>
+              <DeepLuxLogo size="sm" />
               <Badge variant="outline" className="text-xs ml-1 border-emerald-500/50 text-emerald-400">Empresa</Badge>
             </Link>
             <Button variant="ghost" size="sm" asChild>
@@ -129,8 +129,7 @@ export default async function EmpresaDashboardPage() {
       <header className="sticky top-0 z-40 border-b border-border/40 bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link href="/dashboard/empresa" className="flex items-center gap-2">
-            <Stethoscope className="h-6 w-6 text-accent" />
-            <span className="font-headline text-lg font-bold">DeepLux</span>
+            <DeepLuxLogo size="sm" />
             <Badge variant="outline" className="text-xs ml-1 border-emerald-500/50 text-emerald-400">Empresa</Badge>
           </Link>
           <nav className="flex items-center gap-2">

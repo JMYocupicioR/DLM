@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
   TrendingUp, Users, AlertTriangle, CheckCircle2, Clock,
-  DollarSign, Activity, Stethoscope, ChevronRight, ShieldCheck
+  DollarSign, Activity, ChevronRight, ShieldCheck
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { formatMXN } from '@/lib/utils';
 import { PLAN_BADGES } from '@/lib/constants';
 import { approveLicenseVerification, rejectLicenseVerification } from './actions';
@@ -80,9 +81,9 @@ export default async function AdminDashboardPage() {
       <header className="border-b border-border/40 py-4 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Stethoscope className="h-6 w-6 text-accent" />
+            <DeepLuxLogo size="sm" />
             <div>
-              <span className="font-headline text-lg font-bold">DeepLux Admin</span>
+              <span className="font-headline text-lg font-bold">Admin</span>
               <Badge variant="outline" className="ml-2 text-xs">Staff only</Badge>
             </div>
           </div>

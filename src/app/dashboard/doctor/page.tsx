@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertCircle, ArrowRight, CheckCircle2, ExternalLink, Lock,
-  CreditCard, User, Bell, ChevronRight, Stethoscope
+  CreditCard, User, Bell, ChevronRight
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { getTrustConfig } from '@/lib/trust';
 import type { TrustLevel } from '@/types/database';
 import { TRUST_LEVEL_LABELS, PLAN_BADGES } from '@/lib/constants';
@@ -93,8 +94,7 @@ export default async function DoctorDashboardPage() {
       <header className="sticky top-0 z-40 border-b border-border/40 bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-6 w-6 text-accent" />
-            <span className="font-headline text-lg font-bold">DeepLux</span>
+            <DeepLuxLogo size="sm" />
           </Link>
           <nav className="flex items-center gap-2">
             <Button variant="ghost" size="sm" asChild>

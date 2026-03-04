@@ -17,9 +17,10 @@ import { MX_STATES } from '@/lib/constants';
 import { validateRFC } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import {
-  Stethoscope, ArrowRight, ArrowLeft, CheckCircle2, Loader2,
+  ArrowRight, ArrowLeft, CheckCircle2, Loader2,
   Building2, Briefcase, Heart, ShieldCheck, Landmark, Rocket, MoreHorizontal
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { logComplianceAcceptance } from '../actions';
 
 const TOTAL_STEPS = 6;
@@ -295,8 +296,7 @@ export default function RegistroEmpresaPage() {
       <header className="py-4 px-4 border-b border-border/40">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-7 w-7 text-accent" />
-            <span className="font-headline text-xl font-bold">DeepLux</span>
+            <DeepLuxLogo size="md" />
           </Link>
           <div className="text-sm text-muted-foreground">
             Paso {Math.min(step, TOTAL_STEPS)} de {TOTAL_STEPS}
@@ -461,7 +461,7 @@ export default function RegistroEmpresaPage() {
           {step === 3 && (
             <div>
               <h1 className="font-headline text-2xl font-bold text-foreground mb-2">Contacto responsable de la cuenta</h1>
-              <p className="text-muted-foreground mb-6">Esta persona administrará los accesos del equipo médico en DeepLux.</p>
+              <p className="text-muted-foreground mb-6">Esta persona administrará los accesos del equipo médico en DeepLux.org.</p>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -523,7 +523,7 @@ export default function RegistroEmpresaPage() {
           {/* Step 4: Uso de la plataforma */}
           {step === 4 && (
             <div>
-              <h1 className="font-headline text-2xl font-bold text-foreground mb-2">¿Para qué usará DeepLux tu empresa?</h1>
+              <h1 className="font-headline text-2xl font-bold text-foreground mb-2">¿Para qué usará DeepLux.org tu empresa?</h1>
               <p className="text-muted-foreground mb-6">Esto nos ayuda a configurar la mejor experiencia para tu equipo.</p>
               <div className="space-y-6">
                 <div>
@@ -668,7 +668,7 @@ export default function RegistroEmpresaPage() {
               </p>
               {formData.planSlug === 'empresa-enterprise' && (
                 <p className="text-sm text-muted-foreground mb-4">
-                  Un representante de DeepLux se pondrá en contacto contigo en las próximas 24 horas para personalizar tu plan Enterprise.
+                  Un representante de DeepLux.org se pondrá en contacto contigo en las próximas 24 horas para personalizar tu plan Enterprise.
                 </p>
               )}
               <p className="text-sm text-muted-foreground mb-8">

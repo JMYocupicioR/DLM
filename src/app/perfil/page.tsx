@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Stethoscope, ArrowLeft } from 'lucide-react';
+import { CreditCard, ArrowLeft } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { ProfileForm } from './profile-form';
 import { getUserRole, getDashboardRoute } from '@/lib/user-role';
 
@@ -32,8 +33,7 @@ export default async function PerfilPage() {
               <Link href={dashboardPath}><ArrowLeft className="h-4 w-4" /></Link>
             </Button>
             <Link href="/" className="flex items-center gap-2">
-              <Stethoscope className="h-6 w-6 text-accent" />
-              <span className="font-headline text-lg font-bold">DeepLux</span>
+              <DeepLuxLogo size="sm" />
               {isSuperAdmin && (
                 <span className="text-xs px-2 py-0.5 rounded border border-amber-500/50 text-amber-500">CEO</span>
               )}

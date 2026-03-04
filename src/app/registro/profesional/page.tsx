@@ -17,6 +17,7 @@ import {
   Stethoscope, ArrowRight, ArrowLeft, CheckCircle2, Loader2,
   GraduationCap, FlaskConical, Heart, Brain, UserCheck, Dumbbell, User
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { cn, validateCURP, validateRFC, validateCedula } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { logComplianceAcceptance } from '../actions';
@@ -233,8 +234,7 @@ export default function RegistroProfesionalPage() {
       <header className="py-4 px-4 border-b border-border/40">
         <div className="container mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-7 w-7 text-accent" />
-            <span className="font-headline text-xl font-bold">DeepLux</span>
+            <DeepLuxLogo size="md" />
           </Link>
           <div className="text-sm text-muted-foreground">
             Paso {Math.min(step, TOTAL_STEPS)} de {TOTAL_STEPS}

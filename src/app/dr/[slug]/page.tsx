@@ -8,6 +8,7 @@ import {
   Shield, MapPin, Building, GraduationCap, Stethoscope,
   Award, Calendar
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { ProfileQrCode, ProfileShareButton } from './profile-share-qr';
 import { getInitials } from '@/lib/utils';
 import { TRUST_LEVEL_LABELS, USER_TYPE_LABELS } from '@/lib/constants';
@@ -60,8 +61,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       <header className="border-b border-border/40 py-4 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <a href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-6 w-6 text-accent" />
-            <span className="font-headline text-lg font-bold">DeepLux</span>
+            <DeepLuxLogo size="sm" />
           </a>
           <p className="text-xs text-muted-foreground">Perfil Profesional Verificado</p>
         </div>
@@ -90,7 +90,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
                   </div>
                 )}
                 {isVerified && (
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-accent rounded-full flex items-center justify-center border-2 border-card" title="Cédula verificada por DeepLux">
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-accent rounded-full flex items-center justify-center border-2 border-card" title="Cédula verificada por DeepLux.org">
                     <Shield className="h-3 w-3 text-accent-foreground" />
                   </div>
                 )}
@@ -110,7 +110,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
               {isVerified ? (
                 <Badge className="bg-accent/20 text-accent border-accent/40">
                   <Shield className="h-3 w-3 mr-1" />
-                  Cédula Verificada por DeepLux
+                  Cédula Verificada por DeepLux.org
                 </Badge>
               ) : (
                 <Badge variant="outline" className="text-muted-foreground">
@@ -193,7 +193,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Stethoscope className="h-4 w-4 text-accent" />
-                <span className="text-xs text-muted-foreground">Verificado por <strong className="text-accent">DeepLux</strong></span>
+                <span className="text-xs text-muted-foreground">Verificado por <strong className="text-accent">DeepLux.org</strong></span>
               </div>
               <ProfileShareButton profileUrl={profileUrl} />
             </div>
@@ -203,7 +203,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
         {/* CTA for visitors */}
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground mb-3">
-            ¿Eres profesional de la salud? Crea tu perfil verificado en DeepLux.
+            ¿Eres profesional de la salud? Crea tu perfil verificado en DeepLux.org.
           </p>
           <Button variant="outline" asChild>
             <a href="/registro">Crear mi perfil gratis</a>
@@ -230,7 +230,7 @@ export async function generateMetadata({ params }: PageProps) {
   const specialty = profileAny?.specialty;
 
   return {
-    title: `${name}${specialty ? ` - ${specialty}` : ''} | DeepLux`,
-    description: `Perfil profesional verificado de ${name} en DeepLux. Identidad médica certificada.`,
+    title: `${name}${specialty ? ` - ${specialty}` : ''} | DeepLux.org`,
+    description: `Perfil profesional verificado de ${name} en DeepLux.org. Identidad médica certificada.`,
   };
 }

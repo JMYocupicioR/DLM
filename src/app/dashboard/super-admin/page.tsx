@@ -7,8 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DollarSign, TrendingUp, Building2, CreditCard, Activity,
-  AlertTriangle, CheckCircle2, Clock, Stethoscope, ChevronRight
+  AlertTriangle, CheckCircle2, Clock, ChevronRight
 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { formatMXN } from '@/lib/utils';
 import { PLAN_BADGES } from '@/lib/constants';
 import { getUserRole } from '@/lib/user-role';
@@ -90,8 +91,7 @@ export default async function SuperAdminDashboardPage() {
       <header className="sticky top-0 z-40 border-b border-border/40 bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link href="/dashboard/super-admin" className="flex items-center gap-2">
-            <Stethoscope className="h-6 w-6 text-accent" />
-            <span className="font-headline text-lg font-bold">DeepLux</span>
+            <DeepLuxLogo size="sm" />
             <Badge variant="outline" className="text-xs ml-1 border-amber-500/50 text-amber-500">CEO</Badge>
           </Link>
           <nav className="flex items-center gap-2">

@@ -43,3 +43,9 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# local folders
+.cursor/
+.idx/
+docs/
+Docsporimplementar/

@@ -3,8 +3,11 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'DeepLuxMed Solutions Hub',
+  title: 'DeepLux.org | Tecnología Médica',
   description: 'Soluciones de tecnología médica para profesionales de la salud.',
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

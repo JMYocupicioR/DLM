@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Stethoscope, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 import { useToast } from '@/hooks/use-toast';
 
 function LoginForm() {
@@ -88,8 +89,7 @@ function LoginForm() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <Stethoscope className="h-8 w-8 text-accent" />
-          <span className="font-headline text-2xl font-bold text-foreground">DeepLux</span>
+          <DeepLuxLogo size="lg" />
         </div>
 
         <Card className="bg-card border-border/60">

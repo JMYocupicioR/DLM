@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, X, Stethoscope, ArrowRight, Zap } from 'lucide-react';
+import { CheckCircle2, X, ArrowRight, Zap } from 'lucide-react';
+import DeepLuxLogo from '@/components/deeplux-logo';
 
 const individualPlans = [
   {
@@ -230,8 +231,7 @@ export default function PricingPage() {
       <header className="sticky top-0 z-40 border-b border-border/40 bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2">
-            <Stethoscope className="h-7 w-7 text-accent" />
-            <span className="font-headline text-xl font-bold">DeepLux</span>
+            <DeepLuxLogo size="md" />
           </Link>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from 'next/link';
-import { Stethoscope, Menu, X, ChevronDown, Stethoscope as StethIcon, Building2, Briefcase } from 'lucide-react';
+import { Menu, X, ChevronDown, Stethoscope as StethIcon, Building2, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import DeepLuxLogo from '@/components/deeplux-logo';
 
 const solutionsMenu = [
   {
@@ -62,8 +63,7 @@ export default function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <Stethoscope className="h-7 w-7 text-accent" />
-          <span className="font-headline text-xl font-bold tracking-tight">DeepLux</span>
+          <DeepLuxLogo size="md" />
         </Link>
 
         {/* Desktop nav */}
