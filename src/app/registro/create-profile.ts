@@ -56,5 +56,21 @@ export async function createProfessionalProfileFromOnboarding(
     return { error: error.message };
   }
 
+  // Also update the main profiles table with specialty and license_number
+  // so other parts of the app (header, dashboard, settings) can read them
+  const { error: profileUpdateError } = await supabase
+    .from('profiles')
+    .update({
+      specialty: formData.specialty || null,
+      license_number: formData.cedulaProfesional || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', userId);
+
+  if (profileUpdateError) {
+    console.error('createProfessionalProfileFromOnboarding: profile update error:', profileUpdateError);
+    // Non-fatal: professional_profiles was created successfully
+  }
+
   return {};
 }

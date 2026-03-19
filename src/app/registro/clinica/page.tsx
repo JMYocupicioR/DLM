@@ -14,6 +14,7 @@ import { MX_STATES, SAT_REGIMES } from '@/lib/constants';
 import { cn, validateRFC, validateCedula } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { logComplianceAcceptance } from '../actions';
+import { createClinicFromOnboarding } from '../create-clinic-profile';
 import {
   Stethoscope, ArrowRight, ArrowLeft, CheckCircle2, Loader2,
   Hospital, Microscope, Building, Dumbbell, Building2
@@ -145,6 +146,7 @@ export default function RegistroClinicaPage() {
         options: {
           data: {
             full_name: formData.adminName,
+            role: 'administrator',
             user_type: 'clinic_admin',
             clinic_name: formData.clinicName,
           },
@@ -165,6 +167,27 @@ export default function RegistroClinicaPage() {
           form_data: formData,
           completed_at: new Date().toISOString(),
         });
+
+        // Create clinic record + admin relationship + request access
+        await createClinicFromOnboarding(data.user.id, {
+          clinicType: formData.clinicType,
+          clinicName: formData.clinicName,
+          address: formData.address,
+          city: formData.city,
+          regionCode: formData.regionCode,
+          phone: formData.phone,
+          institutionalEmail: formData.institutionalEmail,
+          razonSocial: formData.razonSocial,
+          rfc: formData.rfc,
+          cfdiRegime: formData.cfdiRegime,
+          cofeprisNumber: formData.cofeprisNumber,
+          reprisNumber: formData.reprisNumber,
+          directorName: formData.directorName,
+          directorCedula: formData.directorCedula,
+          staffSize: formData.staffSize,
+          specialties: formData.specialties,
+        }).catch((err) => console.error('Clinic creation error:', err));
+
         await Promise.all([
           logComplianceAcceptance(data.user.id, 'terminos'),
           logComplianceAcceptance(data.user.id, 'privacidad'),
@@ -477,7 +500,7 @@ export default function RegistroClinicaPage() {
                   <Checkbox
                     id="acceptTerminos"
                     checked={formData.acceptTerminos}
-                    onCheckedChange={(v) => update('acceptTerminos', !!v)}
+                    onCheckedChange={(v) => update('acceptTerminos', String(!!v))}
                   />
                   <label htmlFor="acceptTerminos" className="text-sm text-muted-foreground cursor-pointer leading-tight">
                     Acepto los <Link href="/legal/terminos" className="text-accent hover:underline" target="_blank">Términos y Condiciones de Uso</Link>
@@ -487,7 +510,7 @@ export default function RegistroClinicaPage() {
                   <Checkbox
                     id="acceptPrivacidad"
                     checked={formData.acceptPrivacidad}
-                    onCheckedChange={(v) => update('acceptPrivacidad', !!v)}
+                    onCheckedChange={(v) => update('acceptPrivacidad', String(!!v))}
                   />
                   <label htmlFor="acceptPrivacidad" className="text-sm text-muted-foreground cursor-pointer leading-tight">
                     Acepto el <Link href="/legal/privacidad" className="text-accent hover:underline" target="_blank">Aviso de Privacidad Integral</Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Menu, X, ChevronDown, Stethoscope as StethIcon, Building2, Briefcase } from 'lucide-react';
+import { Menu, X, ChevronDown, Stethoscope as StethIcon, Building2, Briefcase, Layers, Printer, HeartPulse } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -14,6 +14,7 @@ const solutionsMenu = [
     icon: StethIcon,
     href: '/#medicos',
     badge: null,
+    isPage: false,
   },
   {
     label: 'Para Clínicas',
@@ -21,12 +22,38 @@ const solutionsMenu = [
     icon: Building2,
     href: '/#clinicas',
     badge: null,
+    isPage: false,
   },
   {
     label: 'Para Empresas',
     description: 'Salud ocupacional y cumplimiento NOM',
     icon: Briefcase,
     href: '/#empresas',
+    badge: 'Nuevo',
+    isPage: false,
+  },
+];
+
+const productsMenu = [
+  {
+    label: 'DeepLux MED',
+    description: 'La suite médica completa',
+    icon: HeartPulse,
+    href: '/med',
+    badge: null,
+  },
+  {
+    label: 'Portafolio',
+    description: 'Las 6 apps del ecosistema',
+    icon: Layers,
+    href: '/portafolio',
+    badge: null,
+  },
+  {
+    label: 'DeepLux Bio',
+    description: 'Manufactura 3D médica',
+    icon: Printer,
+    href: '/bio',
     badge: 'Nuevo',
   },
 ];
@@ -85,7 +112,8 @@ export default function Header() {
             </button>
 
             {solutionsOpen && (
-              <div className="absolute top-full left-0 mt-2 w-72 rounded-xl border border-border/60 bg-background shadow-xl shadow-black/20 p-2 z-50">
+              <div className="absolute top-full left-0 mt-2 w-80 rounded-xl border border-border/60 bg-background shadow-xl shadow-black/20 p-2 z-50">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-3 pt-1 pb-1.5">Segmentos</p>
                 {solutionsMenu.map(({ label, description, icon: Icon, href, badge }) => (
                   <button
                     key={label}
@@ -108,6 +136,31 @@ export default function Header() {
                       <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{description}</p>
                     </div>
                   </button>
+                ))}
+                <div className="my-1.5 border-t border-border/40" />
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-3 pt-1 pb-1.5">Productos</p>
+                {productsMenu.map(({ label, description, icon: Icon, href, badge }) => (
+                  <Link
+                    key={label}
+                    href={href}
+                    onClick={() => setSolutionsOpen(false)}
+                    className="w-full flex items-start gap-3 px-3 py-2.5 rounded-lg text-left hover:bg-accent/10 transition-colors group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-accent/20 transition-colors">
+                      <Icon className="h-4 w-4 text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-foreground">{label}</span>
+                        {badge && (
+                          <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-medium">
+                            {badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{description}</p>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -148,7 +201,7 @@ export default function Header() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-border/40 bg-background px-4 py-4 space-y-1">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 mb-2">Soluciones</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 mb-2">Segmentos</p>
           {solutionsMenu.map(({ label, icon: Icon, href, badge }) => (
             <button
               key={label}
@@ -165,6 +218,25 @@ export default function Header() {
               )}
             </button>
           ))}
+          <div className="border-t border-border/40 pt-2 mt-2 space-y-1">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 mb-2">Productos</p>
+            {productsMenu.map(({ label, icon: Icon, href, badge }) => (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg text-sm text-foreground hover:bg-accent/10 transition-colors"
+              >
+                <Icon className="h-4 w-4 text-accent" />
+                {label}
+                {badge && (
+                  <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-medium ml-auto">
+                    {badge}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </div>
           <div className="border-t border-border/40 pt-2 mt-2 space-y-1">
             <Link
               href="/pricing"

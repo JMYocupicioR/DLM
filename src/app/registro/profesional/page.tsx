@@ -146,6 +146,7 @@ export default function RegistroProfesionalPage() {
         options: {
           data: {
             full_name: formData.fullName,
+            role: 'doctor',
             user_type: formData.userTypeSlug,
           },
         },
@@ -494,7 +495,7 @@ export default function RegistroProfesionalPage() {
                   <Checkbox
                     id="acceptTerminos"
                     checked={formData.acceptTerminos}
-                    onCheckedChange={(v) => update('acceptTerminos', !!v)}
+                    onCheckedChange={(v) => update('acceptTerminos', String(!!v))}
                   />
                   <label htmlFor="acceptTerminos" className="text-sm text-muted-foreground cursor-pointer leading-tight">
                     Acepto los <Link href="/legal/terminos" className="text-accent hover:underline" target="_blank">Términos y Condiciones de Uso</Link>
@@ -504,7 +505,7 @@ export default function RegistroProfesionalPage() {
                   <Checkbox
                     id="acceptPrivacidad"
                     checked={formData.acceptPrivacidad}
-                    onCheckedChange={(v) => update('acceptPrivacidad', !!v)}
+                    onCheckedChange={(v) => update('acceptPrivacidad', String(!!v))}
                   />
                   <label htmlFor="acceptPrivacidad" className="text-sm text-muted-foreground cursor-pointer leading-tight">
                     Acepto el <Link href="/legal/privacidad" className="text-accent hover:underline" target="_blank">Aviso de Privacidad Integral</Link>
