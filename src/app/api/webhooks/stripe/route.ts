@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
+import { insertUserNotification } from '@/lib/notifications-server';
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
@@ -174,6 +175,8 @@ async function handleStripeEvent(
         period_end: new Date(stripeSubAny.current_period_end * 1000).toISOString(),
       });
 
+      await recordCouponRedemption(supabase, invoice, dbSubData);
+
       if (dbSubData.user_id) {
         await supabase.rpc('recompute_user_product_access', { p_user_id: dbSubData.user_id });
       }
@@ -218,6 +221,12 @@ async function handleStripeEvent(
 
       if (dbSubData.user_id) {
         await supabase.rpc('recompute_user_product_access', { p_user_id: dbSubData.user_id });
+        await insertUserNotification(supabase, dbSubData.user_id, {
+          type: 'billing',
+          title: 'Pago pendiente',
+          body: 'Actualiza tu método de pago para evitar interrupciones en tu suscripción.',
+          href: '/suscripcion',
+        });
       }
       break;
     }
@@ -283,5 +292,73 @@ async function handleStripeEvent(
       }
       break;
     }
+  }
+}
+
+/**
+ * Registers a coupon redemption in coupon_redemptions and increments coupons.times_redeemed,
+ * if the invoice includes a discount that maps to a local coupon (via stripe_coupon_id).
+ */
+async function recordCouponRedemption(
+  supabase: Awaited<ReturnType<typeof createServiceClient>>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoice: any,
+  dbSubData: { id: string; user_id: string | null; clinic_id: string | null }
+) {
+  const discounts: unknown[] = invoice?.total_discount_amounts ?? [];
+  if (!Array.isArray(discounts) || discounts.length === 0) return;
+
+  for (const d of discounts) {
+    const entry = d as { amount?: number; discount?: string };
+    const amount = entry.amount ?? 0;
+    const discountId = entry.discount;
+    if (!discountId || amount <= 0) continue;
+
+    // Resolve the Discount → coupon id via the invoice.discount_objects, which Stripe sometimes nests.
+    // Fallback: scan invoice.discounts for matching discount id and pull its coupon.
+    let stripeCouponId: string | null = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const discountObjects = (invoice?.discounts ?? []) as any[];
+    for (const doc of discountObjects) {
+      if (typeof doc === 'string') continue;
+      if (doc?.id === discountId && doc?.coupon?.id) {
+        stripeCouponId = doc.coupon.id;
+        break;
+      }
+    }
+
+    if (!stripeCouponId) continue;
+
+    const { data: couponRow } = await supabase
+      .from('coupons')
+      .select('id')
+      .eq('stripe_coupon_id', stripeCouponId)
+      .single();
+
+    const couponRowData = couponRow as { id: string } | null;
+    if (!couponRowData?.id) continue;
+
+    await supabase.rpc('increment_coupon_redemption', {
+      p_coupon_id: couponRowData.id,
+      p_subscription_id: dbSubData.id,
+      p_user_id: dbSubData.user_id,
+      p_clinic_id: dbSubData.clinic_id,
+      p_amount_discounted_cents: amount,
+      p_currency: (invoice.currency as string).toUpperCase(),
+      p_stripe_invoice_id: invoice.id,
+      p_stripe_checkout_session_id: null,
+    });
+
+    await supabase.from('audit_log').insert({
+      actor_id: dbSubData.user_id,
+      action: 'coupon_redeemed',
+      target_type: 'coupon',
+      target_id: couponRowData.id,
+      after: {
+        subscription_id: dbSubData.id,
+        amount_discounted_cents: amount,
+        stripe_invoice_id: invoice.id,
+      },
+    });
   }
 }

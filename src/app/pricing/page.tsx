@@ -284,17 +284,15 @@ export default function PricingPage() {
           </button>
         </div>
 
-        {/* Billing toggle — only show for individual and clinic */}
-        {tab !== 'empresa' && (
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <Label className={`text-sm ${!annual ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Mensual</Label>
-            <Switch checked={annual} onCheckedChange={setAnnual} />
-            <Label className={`text-sm ${annual ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-              Anual
-              <Badge variant="secondary" className="ml-2 text-xs">Ahorra {savingsPercent}%</Badge>
-            </Label>
-          </div>
-        )}
+        {/* Billing toggle (incl. empresa con precios anuales) */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <Label className={`text-sm ${!annual ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>Mensual</Label>
+          <Switch checked={annual} onCheckedChange={setAnnual} />
+          <Label className={`text-sm ${annual ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+            Anual
+            <Badge variant="secondary" className="ml-2 text-xs">Ahorra {savingsPercent}%</Badge>
+          </Label>
+        </div>
 
         {/* Plans grid */}
         {tab === 'empresa' ? (
@@ -321,9 +319,14 @@ export default function PricingPage() {
                     ) : (
                       <div>
                         <span className="text-3xl font-bold text-foreground">
-                          ${plan.priceMonthly.toLocaleString()}
+                          ${annual ? Math.floor(plan.priceAnnual / 12).toLocaleString() : plan.priceMonthly.toLocaleString()}
                         </span>
                         <span className="text-muted-foreground text-sm"> MXN/mes</span>
+                        {annual && plan.priceAnnual > 0 && (
+                          <p className="text-xs text-accent mt-0.5">
+                            ${plan.priceAnnual.toLocaleString()} MXN/año
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -347,7 +350,7 @@ export default function PricingPage() {
                     variant={plan.highlight ? 'default' : 'outline'}
                     asChild
                   >
-                    <Link href={plan.slug === 'empresa-enterprise' ? '/#contact' : `/registro/empresa?plan=${plan.slug}`}>
+                    <Link href={plan.slug === 'empresa-enterprise' ? '/#contact' : `/registro/empresa?plan=${plan.slug}&billing=${annual ? 'annual' : 'monthly'}`}>
                       {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -408,11 +411,11 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   <Button
-                    className={`w-full mt-6 ${plan.highlight ? '' : 'variant-outline'}`}
+                    className="w-full mt-6 cursor-pointer"
                     variant={plan.highlight ? 'default' : 'outline'}
                     asChild
                   >
-                    <Link href={`/registro/profesional?plan=${plan.slug}`}>
+                    <Link href={`/registro/profesional?plan=${plan.slug}&billing=${annual ? 'annual' : 'monthly'}`}>
                       {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -471,7 +474,7 @@ export default function PricingPage() {
                     variant={plan.highlight ? 'default' : 'outline'}
                     asChild
                   >
-                    <Link href={plan.slug === 'clinica-enterprise' ? '/#contact' : `/registro/clinica?plan=${plan.slug}`}>
+                    <Link href={plan.slug === 'clinica-enterprise' ? '/#contact' : `/registro/clinica?plan=${plan.slug}&billing=${annual ? 'annual' : 'monthly'}`}>
                       {plan.cta} <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
@@ -496,9 +499,12 @@ export default function PricingPage() {
 
         {/* FAQ / Guarantee */}
         <div className="mt-16 text-center">
-          <p className="text-muted-foreground text-sm mb-6">
+          <p className="text-muted-foreground text-sm mb-2">
             Todos los planes incluyen 14 días de prueba. Sin permanencia. Cancela en cualquier momento.
             Pagos seguros con Stripe (tarjeta). OXXO y SPEI próximamente.
+          </p>
+          <p className="text-muted-foreground text-xs mb-6">
+            ¿Tienes un código de descuento? Podrás aplicarlo al momento del pago.
           </p>
           <div className="flex items-center justify-center gap-6 flex-wrap text-xs text-muted-foreground">
             <span>🔒 Datos cifrados con TLS</span>

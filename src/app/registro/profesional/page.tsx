@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import {
 import DeepLuxLogo from '@/components/deeplux-logo';
 import { cn, validateCURP, validateRFC, validateCedula } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
+import { CouponField, type CouponValidationResult } from '@/components/coupon-field';
 import { logComplianceAcceptance } from '../actions';
 import { createProfessionalProfileFromOnboarding } from '../create-profile';
 
@@ -83,8 +84,9 @@ const initialData: FormData = {
   acceptPrivacidad: false,
 };
 
-export default function RegistroProfesionalPage() {
+function RegistroProfesionalContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const { toast } = useToast();
 
@@ -92,11 +94,30 @@ export default function RegistroProfesionalPage() {
   const [formData, setFormData] = useState<FormData>(initialData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponValidationResult | null>(null);
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
+
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan && plans.some((p) => p.slug === plan)) {
+      setFormData((prev) => ({ ...prev, planSlug: plan }));
+    }
+    const billing = searchParams.get('billing');
+    if (billing === 'annual') setBillingInterval('annual');
+    else if (billing === 'monthly') setBillingInterval('monthly');
+  }, [searchParams]);
 
   const update = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
+    // Clear the applied coupon when the selected plan changes, because the
+    // validation is tied to a specific plan + billing interval.
+    if (field === 'planSlug') setAppliedCoupon(null);
   };
+
+  const isResidentOrResearcher = ['resident', 'researcher'].includes(formData.userTypeSlug);
+  const selectedPlan = plans.find((p) => p.slug === formData.planSlug);
+  const canUseCoupon = isResidentOrResearcher && !!selectedPlan && selectedPlan.priceMXN > 0;
 
   const selectedUserType = userTypes.find((t) => t.slug === formData.userTypeSlug);
   const needsCedula = ['specialist', 'general_physician', 'resident', 'researcher', 'physiotherapist'].includes(formData.userTypeSlug);
@@ -195,8 +216,9 @@ export default function RegistroProfesionalPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             planSlug: formData.planSlug,
-            billingInterval: 'monthly',
+            billingInterval,
             processor: 'stripe',
+            couponCode: appliedCoupon?.code,
           }),
         });
         const checkoutData = await checkoutRes.json();
@@ -489,6 +511,33 @@ export default function RegistroProfesionalPage() {
                 })}
               </div>
               {errors.planSlug && <p className="text-destructive text-sm mt-2">{errors.planSlug}</p>}
+
+              {isResidentOrResearcher && (
+                <div className="mt-6 border border-accent/30 bg-accent/5 rounded-lg p-4 space-y-3">
+                  <div className="flex items-start gap-2">
+                    <FlaskConical className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        Beneficio para {formData.userTypeSlug === 'researcher' ? 'investigadores' : 'médicos residentes'}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {canUseCoupon
+                          ? 'Si cuentas con un código de descuento institucional o académico, aplícalo aquí para obtener una tarifa preferencial.'
+                          : 'Selecciona un plan de pago para aplicar tu código de descuento académico o institucional.'}
+                      </p>
+                    </div>
+                  </div>
+                  {canUseCoupon && (
+                    <CouponField
+                      planSlug={formData.planSlug}
+                      billingInterval={billingInterval}
+                      onValidCoupon={(r) => setAppliedCoupon(r)}
+                      onClearCoupon={() => setAppliedCoupon(null)}
+                    />
+                  )}
+                </div>
+              )}
+
               <div className="mt-6 space-y-4 border border-border/60 rounded-lg p-4">
                 <p className="text-sm font-medium text-foreground">Aceptación de documentos legales *</p>
                 <div className="flex items-start gap-3">
@@ -570,5 +619,19 @@ export default function RegistroProfesionalPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function RegistroProfesionalPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
+          Cargando registro…
+        </div>
+      }
+    >
+      <RegistroProfesionalContent />
+    </Suspense>
   );
 }

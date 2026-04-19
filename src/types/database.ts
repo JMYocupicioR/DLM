@@ -152,6 +152,19 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['products']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['products']['Insert']>;
       };
+      profiles: {
+        Row: {
+          id: string;
+          uuid: string | null;
+          email: string | null;
+          full_name: string | null;
+          role: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
+      };
       subscription_plans: {
         Row: {
           id: string;
@@ -352,6 +365,33 @@ export interface Database {
         Insert: Omit<Database['public']['Tables']['profile_completion_tasks']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['profile_completion_tasks']['Insert']>;
       };
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          type: string;
+          title: string;
+          body: string | null;
+          href: string | null;
+          read_at: string | null;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['notifications']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['notifications']['Insert']>;
+      };
+      support_tickets: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          email: string;
+          subject: string;
+          message: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['support_tickets']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['support_tickets']['Insert']>;
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -385,3 +425,5 @@ export type AuditLog = Database['public']['Tables']['audit_log']['Row'];
 export type ProfileCompletionTask = Database['public']['Tables']['profile_completion_tasks']['Row'];
 export type ClinicFinancial = Database['public']['Tables']['clinic_financials']['Row'];
 export type EmpresaProfile = Database['public']['Tables']['empresa_profiles']['Row'];
+export type AppNotification = Database['public']['Tables']['notifications']['Row'];
+export type SupportTicket = Database['public']['Tables']['support_tickets']['Row'];

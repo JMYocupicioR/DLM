@@ -30,22 +30,58 @@ const formSchema = z.object({
   }),
 });
 
-export default function ContactForm() {
+type ContactFormProps = {
+  defaultEmail?: string;
+  /** Si true, envía el mensaje a /api/support (requiere sesión). */
+  supportMode?: boolean;
+};
+
+export default function ContactForm({ defaultEmail = "", supportMode = false }: ContactFormProps) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      email: "",
+      email: defaultEmail,
       message: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (supportMode) {
+      try {
+        const res = await fetch("/api/support", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          toast({
+            variant: "destructive",
+            title: "No se pudo enviar",
+            description: typeof data.error === "string" ? data.error : "Intenta de nuevo.",
+          });
+          return;
+        }
+        toast({
+          title: "Mensaje enviado",
+          description: "Gracias. Te responderemos pronto por correo.",
+        });
+        form.reset({ name: "", email: values.email, message: "" });
+      } catch {
+        toast({
+          variant: "destructive",
+          title: "Error de red",
+          description: "Comprueba tu conexión e intenta de nuevo.",
+        });
+      }
+      return;
+    }
+
     toast({
-      title: "Mensaje Enviado",
+      title: "Mensaje recibido",
       description: "Gracias por contactarnos. Te responderemos pronto.",
     });
     form.reset();
@@ -59,7 +95,7 @@ export default function ContactForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre Completo</FormLabel>
+              <FormLabel>Nombre completo</FormLabel>
               <FormControl>
                 <Input placeholder="Tu nombre" {...field} />
               </FormControl>
@@ -72,9 +108,9 @@ export default function ContactForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Correo Electrónico</FormLabel>
+              <FormLabel>Correo electrónico</FormLabel>
               <FormControl>
-                <Input placeholder="tu@email.com" {...field} />
+                <Input placeholder="tu@email.com" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,8 +133,8 @@ export default function ContactForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" size="lg">
-          Enviar Mensaje
+        <Button type="submit" className="w-full cursor-pointer" size="lg">
+          Enviar mensaje
           <Send className="ml-2 h-4 w-4" />
         </Button>
       </form>

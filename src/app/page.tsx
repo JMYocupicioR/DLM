@@ -128,22 +128,26 @@ const steps = [
 
 const apps = [
   {
-    icon: Scale,
-    title: 'Escalas-DLM',
-    color: '#41E2BA',
-    tagline: 'Para médicos, investigadores y residentes',
-    description: 'Más de 200 escalas clínicas validadas con exportación estructurada para análisis estadístico.',
-    status: 'Disponible',
-    link: 'https://www.escalas-dlm.com',
-  },
-  {
     icon: FileText,
     title: 'Expediente-DLM',
     color: '#2E3192',
     tagline: 'NOM-024 compliance garantizado',
     description: 'Expediente clínico electrónico con cumplimiento legal, firma digital y búsqueda inteligente.',
-    status: 'Disponible',
+    status: 'Disponible' as const,
     link: 'https://expediente-dlm.netlify.app/',
+    featured: true,
+    highlights: ['Firma digital', 'Búsqueda IA', 'NOM-024'],
+  },
+  {
+    icon: Scale,
+    title: 'Escalas-DLM',
+    color: '#41E2BA',
+    tagline: 'Para médicos, investigadores y residentes',
+    description: 'Más de 200 escalas clínicas validadas con exportación estructurada para análisis estadístico.',
+    status: 'Disponible' as const,
+    link: 'https://www.escalas-dlm.com',
+    featured: false,
+    highlights: [],
   },
   {
     icon: Syringe,
@@ -151,8 +155,10 @@ const apps = [
     color: '#6C63FF',
     tagline: 'Para especialistas en neurología y rehabilitación',
     description: 'Calculadora de dosis, mapas de aplicación y seguimiento longitudinal de toxina botulínica.',
-    status: 'Próximamente',
-    link: null,
+    status: 'Nuevo' as const,
+    link: 'https://toxina.netlify.app/',
+    featured: false,
+    highlights: [],
   },
   {
     icon: BrainCog,
@@ -160,8 +166,10 @@ const apps = [
     color: '#FF6B6B',
     tagline: 'Rehabilitación cognitiva digital',
     description: 'Plataforma de neurorrehabilitación con ejercicios adaptativos y métricas de progreso.',
-    status: 'Próximamente',
-    link: null,
+    status: 'Nuevo' as const,
+    link: 'https://cognitivapp.netlify.app/',
+    featured: false,
+    highlights: [],
   },
   {
     icon: MonitorPlay,
@@ -169,8 +177,10 @@ const apps = [
     color: '#FFA600',
     tagline: 'Telerehabilitación y educación médica continua',
     description: 'Videos de fisioterapia, seguimiento remoto y cursos CME con créditos verificables.',
-    status: 'Próximamente',
+    status: 'Próximamente' as const,
     link: null,
+    featured: false,
+    highlights: [],
   },
   {
     icon: Printer,
@@ -178,10 +188,18 @@ const apps = [
     color: '#00C9A7',
     tagline: 'Exclusivo para clínicas y hospitales',
     description: 'Modelos anatómicos, prótesis e implantes a medida integrados directamente al expediente.',
-    status: 'Próximamente',
+    status: 'Próximamente' as const,
     link: null,
+    featured: false,
+    highlights: [],
   },
 ];
+
+const statusStyles: Record<'Disponible' | 'Nuevo' | 'Próximamente', { bg: string; text: string; border: string }> = {
+  Disponible: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+  Nuevo:      { bg: 'bg-accent/15',       text: 'text-accent',      border: 'border-accent/40' },
+  Próximamente: { bg: 'bg-muted',         text: 'text-muted-foreground', border: 'border-border/60' },
+};
 
 const testimonials = [
   {
@@ -285,75 +303,178 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
+      {/* Skip to content link for keyboard navigation (WCAG) */}
+      <a href="#main-content" className="skip-to-content">Saltar al contenido principal</a>
+
       <Header />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
 
         {/* ── Hero ─────────────────────────────────────────────────────── */}
-        <section id="home" className="relative py-24 md:py-36 overflow-hidden">
-          {/* Ambient glow */}
-          <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-accent/8 rounded-full blur-3xl" />
+        <section id="home" className="relative py-20 md:py-28 overflow-hidden">
+          {/* Ambient background: grid + glow */}
+          <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
+            <div className="absolute inset-0 bg-grid-pattern opacity-40" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-accent/10 rounded-full blur-3xl animate-hero-glow" />
+            <div className="absolute bottom-[-200px] right-[-100px] w-[500px] h-[500px] bg-primary/20 rounded-full blur-3xl" />
           </div>
 
-          <div className="container mx-auto px-4 text-center">
-            {/* Audience selector pills */}
-            <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
-              {audiences.map(({ id, label, icon: Icon }) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setActiveAudience(id as keyof typeof heroContent)}
-                  className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200',
-                    activeAudience === id
-                      ? 'bg-accent text-accent-foreground border-accent shadow-lg shadow-accent/20'
-                      : 'bg-card/50 text-muted-foreground border-border/60 hover:border-accent/50 hover:text-foreground'
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Headline */}
-            <h1 className="font-headline text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-5 max-w-4xl mx-auto leading-tight transition-all duration-300">
-              {hero.headline}
-            </h1>
-            <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-10 transition-all duration-300">
-              {hero.sub}
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button size="lg" asChild className="shadow-lg shadow-accent/20 px-8">
-                <Link href={hero.href}>
-                  {hero.cta}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/pricing">Ver todos los planes</Link>
-              </Button>
-            </div>
-
-            <p className="text-xs text-muted-foreground mt-5">
-              Sin tarjeta de crédito · 14 días gratis · Cancela cuando quieras
-            </p>
-
-            {/* Scroll hints */}
-            <div className="flex items-center justify-center gap-6 mt-10 flex-wrap">
-              {[
-                { icon: Lock,    text: 'Datos cifrados TLS 256' },
-                { icon: Receipt, text: 'Factura CFDI incluida' },
-                { icon: Clock,   text: 'Activación inmediata' },
-                { icon: Shield,  text: 'NOM-024 compliant' },
-              ].map(({ icon: Icon, text }) => (
-                <span key={text} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Icon className="h-3.5 w-3.5 text-accent" />
-                  {text}
+          <div className="container mx-auto px-4">
+            {/* "Live" ecosystem announcement banner */}
+            <div className="flex justify-center mb-6">
+              <Link
+                href="#services"
+                className="group inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/10 text-xs font-medium text-accent hover:bg-accent/15 transition-colors"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-60" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
                 </span>
-              ))}
+                Toxina-DLM y CognitivApp-DLM ya están disponibles
+                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+
+            {/* Audience selector pills */}
+            <div className="flex items-center justify-center gap-2 mb-8 flex-wrap" role="tablist" aria-label="Selecciona tu audiencia">
+              {audiences.map(({ id, label, icon: Icon }) => {
+                const isActive = activeAudience === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setActiveAudience(id as keyof typeof heroContent)}
+                    className={cn(
+                      'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-colors duration-200 cursor-pointer',
+                      isActive
+                        ? 'bg-accent text-accent-foreground border-accent shadow-lg shadow-accent/20'
+                        : 'bg-card/50 text-muted-foreground border-border/60 hover:border-accent/50 hover:text-foreground'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="grid lg:grid-cols-5 gap-10 lg:gap-12 items-center max-w-6xl mx-auto">
+              {/* Copy */}
+              <div className="lg:col-span-3 text-center lg:text-left">
+                <h1 className="font-headline text-4xl md:text-5xl lg:text-[56px] font-bold tracking-tight text-foreground mb-5 leading-[1.1]">
+                  {hero.headline}
+                </h1>
+                <p className="text-lg text-muted-foreground mb-8 max-w-xl lg:max-w-none mx-auto lg:mx-0">
+                  {hero.sub}
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3">
+                  <Button size="lg" asChild className="shadow-lg shadow-accent/20 px-8 w-full sm:w-auto">
+                    <Link href={hero.href}>
+                      {hero.cta}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
+                    <Link href="/pricing">Ver todos los planes</Link>
+                  </Button>
+                </div>
+
+                <p className="text-xs text-muted-foreground mt-5">
+                  Sin tarjeta de crédito · 14 días gratis · Cancela cuando quieras
+                </p>
+
+                <div className="flex items-center justify-center lg:justify-start gap-x-5 gap-y-2 mt-8 flex-wrap">
+                  {[
+                    { icon: Lock,    text: 'TLS 256' },
+                    { icon: Receipt, text: 'CFDI incluida' },
+                    { icon: Clock,   text: 'Activación inmediata' },
+                    { icon: Shield,  text: 'NOM-024' },
+                  ].map(({ icon: Icon, text }) => (
+                    <span key={text} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Icon className="h-3.5 w-3.5 text-accent" />
+                      {text}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Visual: Floating apps bento preview */}
+              <div className="lg:col-span-2 hidden lg:block">
+                <div className="relative">
+                  {/* Glow backdrop */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-primary/20 to-transparent rounded-3xl blur-2xl" aria-hidden="true" />
+
+                  {/* Bento preview card */}
+                  <div className="relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur p-4 shadow-2xl shadow-black/40">
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <span className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500/60" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" />
+                      <span className="ml-2 text-xs text-muted-foreground">deeplux.com/dashboard</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {apps.slice(0, 6).map(({ icon: AppIcon, title, color, status }, i) => (
+                        <div
+                          key={title}
+                          className={cn(
+                            'aspect-square rounded-xl flex flex-col items-center justify-center gap-1.5 border border-border/40 text-center px-2 relative',
+                            status === 'Próximamente' ? 'bg-muted/30 opacity-60' : 'bg-background/60'
+                          )}
+                          style={i === 0 ? { animationDelay: '0s' } : { animationDelay: `${i * 0.5}s` }}
+                        >
+                          {status === 'Nuevo' && (
+                            <span className="absolute top-1 right-1 text-[8px] font-bold px-1 rounded bg-accent text-accent-foreground">NUEVO</span>
+                          )}
+                          <div
+                            className="w-8 h-8 rounded-lg flex items-center justify-center"
+                            style={{ backgroundColor: `${color}30` }}
+                          >
+                            <AppIcon className="h-4 w-4" style={{ color }} />
+                          </div>
+                          <p className="text-[9px] font-medium text-foreground leading-tight">
+                            {title.replace('-DLM', '')}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-border/40 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center">
+                          <Stethoscope className="h-3.5 w-3.5 text-accent" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-foreground leading-tight">Dr. García</p>
+                          <p className="text-[9px] text-muted-foreground leading-tight">Plan Suite Médica</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-[9px] text-accent">
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        Verificado
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Floating badges */}
+                  <div className="absolute -top-4 -left-6 rounded-xl border border-border/60 bg-card/95 backdrop-blur px-3 py-2 shadow-xl flex items-center gap-2 animate-float">
+                    <Shield className="h-4 w-4 text-accent" />
+                    <div>
+                      <p className="text-[10px] font-semibold text-foreground leading-tight">NOM-024</p>
+                      <p className="text-[9px] text-muted-foreground leading-tight">Verificado</p>
+                    </div>
+                  </div>
+                  <div className="absolute -bottom-4 -right-6 rounded-xl border border-border/60 bg-card/95 backdrop-blur px-3 py-2 shadow-xl flex items-center gap-2 animate-float" style={{ animationDelay: '2s' }}>
+                    <Receipt className="h-4 w-4 text-accent" />
+                    <div>
+                      <p className="text-[10px] font-semibold text-foreground leading-tight">CFDI 4.0</p>
+                      <p className="text-[9px] text-muted-foreground leading-tight">Automático</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -396,7 +517,7 @@ export default function Home() {
                     key={seg.id}
                     id={seg.id === 'medicos' ? 'medicos' : seg.id === 'clinicas' ? 'clinicas' : 'empresas'}
                     className={cn(
-                      'relative rounded-2xl border border-border/60 bg-gradient-to-br p-6 flex flex-col',
+                      'relative rounded-2xl border border-border/60 bg-gradient-to-br p-6 flex flex-col transition-colors duration-300 hover:border-accent/60',
                       seg.gradient
                     )}
                   >
@@ -486,7 +607,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── Ecosistema de Apps ───────────────────────────────────────── */}
+        {/* ── Ecosistema de Apps (Bento Grid) ──────────────────────────── */}
         <section id="services" className="py-24">
           <div className="container mx-auto px-4">
             <div className="text-center mb-14">
@@ -502,52 +623,107 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-              {apps.map(({ icon: AppIcon, title, color, tagline, description, status, link }) => (
-                <Card
-                  key={title}
-                  className="bg-card border-border/60 hover:border-accent/60 transition-all duration-300 hover:-translate-y-0.5 group"
-                >
-                  <CardContent className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div
-                        className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: `${color}22` }}
-                      >
-                        <AppIcon className="h-5 w-5" style={{ color }} />
-                      </div>
-                      <div>
-                        <p className="font-headline font-bold text-foreground text-sm">{title}</p>
-                        <Badge
-                          variant={status === 'Disponible' ? 'default' : 'outline'}
-                          className="text-xs mt-0.5"
-                        >
-                          {status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <p className="text-xs text-accent font-medium mb-1.5">{tagline}</p>
-                    <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{description}</p>
-                    {link ? (
-                      <a
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
-                      >
-                        Abrir app <ArrowRight className="h-3 w-3" />
-                      </a>
-                    ) : (
-                      <span className="text-xs text-muted-foreground/50">Disponible pronto</span>
+            {/* Bento Grid: featured + small cards */}
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 max-w-6xl mx-auto auto-rows-fr">
+              {apps.map(({ icon: AppIcon, title, color, tagline, description, status, link, featured, highlights }) => {
+                const sstyle = statusStyles[status];
+                const CardWrapper: React.ElementType = link ? 'a' : 'div';
+                const wrapperProps = link
+                  ? { href: link, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Abrir ${title}` }
+                  : {};
+
+                return (
+                  <CardWrapper
+                    key={title}
+                    {...wrapperProps}
+                    className={cn(
+                      'group relative overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-300',
+                      'hover:border-accent/60 hover:shadow-xl hover:shadow-accent/5',
+                      link && 'cursor-pointer hover:-translate-y-0.5',
+                      featured ? 'md:col-span-3 md:row-span-2 p-8' : 'md:col-span-2 p-5',
+                      status === 'Próximamente' && 'opacity-75'
                     )}
-                  </CardContent>
-                </Card>
-              ))}
+                  >
+                    {/* Accent gradient overlay */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(circle at 20% 0%, ${color}15, transparent 60%)`,
+                      }}
+                      aria-hidden="true"
+                    />
+
+                    <div className="relative flex flex-col h-full">
+                      <div className="flex items-start justify-between mb-4">
+                        <div
+                          className={cn(
+                            'rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105',
+                            featured ? 'w-14 h-14' : 'w-11 h-11'
+                          )}
+                          style={{ backgroundColor: `${color}22` }}
+                        >
+                          <AppIcon className={cn(featured ? 'h-7 w-7' : 'h-5 w-5')} style={{ color }} />
+                        </div>
+
+                        <span className={cn(
+                          'inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border',
+                          sstyle.bg, sstyle.text, sstyle.border
+                        )}>
+                          {status === 'Nuevo' && <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" aria-hidden="true" />}
+                          {status}
+                        </span>
+                      </div>
+
+                      <div className="flex-grow">
+                        <h3 className={cn(
+                          'font-headline font-bold text-foreground mb-1',
+                          featured ? 'text-2xl' : 'text-base'
+                        )}>
+                          {title}
+                        </h3>
+                        <p className="text-xs text-accent font-medium mb-2">{tagline}</p>
+                        <p className={cn(
+                          'text-muted-foreground leading-relaxed',
+                          featured ? 'text-sm' : 'text-xs'
+                        )}>
+                          {description}
+                        </p>
+
+                        {featured && highlights.length > 0 && (
+                          <ul className="mt-5 flex flex-wrap gap-2">
+                            {highlights.map((h) => (
+                              <li
+                                key={h}
+                                className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg bg-background/60 border border-border/60 text-foreground/80"
+                              >
+                                <CheckCircle2 className="h-3 w-3 text-accent" />
+                                {h}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      {link ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-accent mt-4 group-hover:gap-2 transition-all">
+                          Abrir app
+                          <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/60 mt-4">Disponible pronto</span>
+                      )}
+                    </div>
+                  </CardWrapper>
+                );
+              })}
             </div>
 
             <div className="text-center mt-10">
               <Button variant="outline" asChild>
-                <Link href="/pricing">Ver qué apps incluye cada plan <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <Link href="/pricing">
+                  Ver qué apps incluye cada plan
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </div>
           </div>
@@ -611,20 +787,31 @@ export default function Home() {
             </div>
 
             {/* Tabs */}
-            <div className="flex items-center justify-center gap-1 mb-10 bg-card rounded-lg p-1 w-fit mx-auto border border-border/60">
-              {pricingPreview.map(({ id, tab }) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setPricingTab(id)}
-                  className={cn(
-                    'px-5 py-2 rounded-md text-sm font-medium transition-all',
-                    pricingTab === id ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-                  )}
-                >
-                  {tab}
-                </button>
-              ))}
+            <div
+              className="flex items-center justify-center gap-1 mb-10 bg-card rounded-lg p-1 w-fit mx-auto border border-border/60"
+              role="tablist"
+              aria-label="Filtrar planes por audiencia"
+            >
+              {pricingPreview.map(({ id, tab }) => {
+                const isActive = pricingTab === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setPricingTab(id)}
+                    className={cn(
+                      'px-5 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/5'
+                    )}
+                  >
+                    {tab}
+                  </button>
+                );
+              })}
             </div>
 
             {pricingPreview.filter(p => p.id === pricingTab).map(({ plan, price, period, tag, features, cta, href }) => (
@@ -683,29 +870,36 @@ export default function Home() {
             </div>
 
             <div className="space-y-3">
-              {faqs.map(({ q, a }, i) => (
-                <div
-                  key={q}
-                  className="rounded-xl border border-border/60 bg-card overflow-hidden"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-center justify-between px-5 py-4 text-left"
+              {faqs.map(({ q, a }, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div
+                    key={q}
+                    className={cn(
+                      'rounded-xl border bg-card overflow-hidden transition-colors duration-200',
+                      isOpen ? 'border-accent/40' : 'border-border/60 hover:border-border'
+                    )}
                   >
-                    <span className="font-medium text-sm text-foreground pr-4">{q}</span>
-                    {openFaq === i
-                      ? <ChevronUp className="h-4 w-4 text-accent flex-shrink-0" />
-                      : <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    }
-                  </button>
-                  {openFaq === i && (
-                    <div className="px-5 pb-4">
-                      <p className="text-sm text-muted-foreground leading-relaxed">{a}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer hover:bg-accent/5 transition-colors"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="font-medium text-sm text-foreground pr-4">{q}</span>
+                      {isOpen
+                        ? <ChevronUp className="h-4 w-4 text-accent flex-shrink-0" />
+                        : <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      }
+                    </button>
+                    {isOpen && (
+                      <div className="px-5 pb-4">
+                        <p className="text-sm text-muted-foreground leading-relaxed">{a}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

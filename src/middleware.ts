@@ -2,7 +2,16 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getUserRole, getDashboardRoute, type DashboardRole } from '@/lib/user-role';
 
-const PROTECTED_ROUTES = ['/dashboard', '/perfil', '/suscripcion', '/facturacion', '/clinica', '/admin'];
+const PROTECTED_ROUTES = [
+  '/dashboard',
+  '/perfil',
+  '/suscripcion',
+  '/facturacion',
+  '/uso',
+  '/soporte',
+  '/clinica',
+  '/admin',
+];
 const AUTH_ROUTES = ['/login', '/registro'];
 
 const DASHBOARD_ROLE_PATHS: Record<DashboardRole, string> = {

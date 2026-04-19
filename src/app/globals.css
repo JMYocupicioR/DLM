@@ -2,12 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
+  /* Light mode (default) — healthcare-accessible contrast (DeepLuxMed design-system) */
   :root {
+    --background: 160 45% 98%;
+    --foreground: 168 75% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 168 75% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 168 75% 14%;
+    --primary: 188 85% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 168 71% 45%;
+    --secondary-foreground: 168 75% 10%;
+    --muted: 160 20% 94%;
+    --muted-foreground: 168 25% 32%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 160 18% 88%;
+    --input: 160 18% 88%;
+    --ring: 188 85% 35%;
+    --chart-1: 12 76% 50%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 35%;
+    --chart-4: 43 74% 50%;
+    --chart-5: 27 87% 45%;
+    --radius: 0.5rem;
+    --sidebar-background: 168 40% 97%;
+    --sidebar-foreground: 168 75% 14%;
+    --sidebar-primary: 188 85% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 25% 92%;
+    --sidebar-accent-foreground: 168 75% 14%;
+    --sidebar-border: 160 18% 88%;
+    --sidebar-ring: 188 85% 35%;
+  }
+
+  .dark {
     --background: 237 70% 10%;
     --foreground: 0 0% 98%;
     --card: 237 70% 12%;
@@ -32,7 +65,6 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
     --sidebar-background: 237 70% 10%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 168 71% 58%;
@@ -49,6 +81,62 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
   }
+
+  /* Improved focus ring for keyboard navigation (WCAG) */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Skip-to-content link */
+  .skip-to-content {
+    @apply absolute left-4 top-4 -translate-y-20 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-lg transition-transform focus:translate-y-0 z-[100];
+  }
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-hero-glow,
+  .animate-orbit {
+    animation: none !important;
+  }
+}
+
+/* Ambient hero glow animation */
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, 0) scale(1); }
+  50% { opacity: 0.9; transform: translate(-50%, 0) scale(1.05); }
+}
+
+.animate-hero-glow {
+  animation: heroGlow 8s ease-in-out infinite;
+}
+
+@keyframes subtleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: subtleFloat 6s ease-in-out infinite;
+}
+
+/* Grid pattern backdrop */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
 }

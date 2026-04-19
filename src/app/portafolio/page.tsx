@@ -58,7 +58,7 @@ const products = [
     title: 'Toxina-DLM',
     color: '#6C63FF',
     tagline: 'Precisión en cada aplicación',
-    status: 'Próximamente',
+    status: 'Disponible',
     description: 'Calculadora de dosis inteligente con mapas de aplicación anatómicos interactivos, seguimiento longitudinal por músculo y alertas automáticas de re-aplicación.',
     features: [
       'Calculadora de dosis asistida por IA',
@@ -68,7 +68,7 @@ const products = [
       'Integración directa con expediente',
       'Reportes de tratamiento para paciente',
     ],
-    link: null,
+    link: 'https://toxina.netlify.app/',
     connects: ['ExpedienteDLM', 'Physio-DLM'],
   },
   {
@@ -76,7 +76,7 @@ const products = [
     title: 'CognitivApp-DLM',
     color: '#FF6B6B',
     tagline: 'Neurorrehabilitación digital',
-    status: 'Próximamente',
+    status: 'Disponible',
     description: 'Plataforma de rehabilitación cognitiva con ejercicios adaptativos de atención, memoria y funciones ejecutivas. Métricas de progreso y reportes para familiares.',
     features: [
       'Ejercicios adaptativos multinivel',
@@ -86,7 +86,7 @@ const products = [
       'Integración con escalas cognitivas',
       'Seguimiento remoto de adherencia',
     ],
-    link: null,
+    link: 'https://cognitivapp.netlify.app/',
     connects: ['Escalas-DLM', 'ExpedienteDLM'],
   },
   {
@@ -130,8 +130,8 @@ const products = [
 const roadmap = [
   { quarter: 'Q1 2025', title: 'ExpedienteDLM', subtitle: 'Lanzamiento del expediente electrónico', status: 'done', color: '#2E3192' },
   { quarter: 'Q2 2025', title: 'Escalas-DLM', subtitle: 'Más de 200 escalas clínicas validadas', status: 'done', color: '#41E2BA' },
-  { quarter: 'Q3 2025', title: 'Toxina-DLM', subtitle: 'Calculadora y mapas de aplicación', status: 'current', color: '#6C63FF' },
-  { quarter: 'Q4 2025', title: 'CognitivApp-DLM', subtitle: 'Rehabilitación cognitiva digital', status: 'next', color: '#FF6B6B' },
+  { quarter: 'Q3 2025', title: 'Toxina-DLM', subtitle: 'Calculadora y mapas de aplicación', status: 'done', color: '#6C63FF' },
+  { quarter: 'Q4 2025', title: 'CognitivApp-DLM', subtitle: 'Rehabilitación cognitiva digital', status: 'done', color: '#FF6B6B' },
   { quarter: 'Q1 2026', title: 'Physio-DLM', subtitle: 'Telerehabilitación y CME', status: 'next', color: '#FFA600' },
   { quarter: 'Q2 2026', title: 'Manufactura 3D', subtitle: 'Prótesis e implantes a medida', status: 'next', color: '#00C9A7' },
 ];

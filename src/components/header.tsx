@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import DeepLuxLogo from '@/components/deeplux-logo';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const solutionsMenu = [
   {
@@ -178,6 +179,7 @@ export default function Header() {
           </Button>
 
           <div className="flex items-center gap-2 ml-3 pl-3 border-l border-border/40">
+            <ThemeToggle />
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Iniciar sesión</Link>
             </Button>
@@ -253,7 +255,8 @@ export default function Header() {
               Contacto
             </button>
           </div>
-          <div className="flex gap-2 pt-3 border-t border-border/40">
+          <div className="flex items-center gap-2 pt-3 border-t border-border/40">
+            <ThemeToggle />
             <Button variant="outline" size="sm" className="flex-1" asChild>
               <Link href="/login" onClick={() => setMenuOpen(false)}>Iniciar sesión</Link>
             </Button>

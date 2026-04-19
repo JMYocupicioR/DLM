@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@/lib/supabase/server';
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
-}
+import { getStripe } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -19,9 +16,10 @@ export async function POST(request: NextRequest) {
     billingInterval: 'monthly' | 'annual';
     processor: 'stripe' | 'conekta';
     clinicId?: string;
+    couponCode?: string;
   };
 
-  const { planSlug, billingInterval, processor, clinicId } = body;
+  const { planSlug, billingInterval, processor, clinicId, couponCode } = body;
 
   // Fetch plan
   const { data: plan } = await supabase
@@ -56,10 +54,9 @@ export async function POST(request: NextRequest) {
       status: 'active',
       billing_interval: 'free',
       current_period_start: new Date().toISOString(),
-      current_period_end: null, // No expiry for free plan
+      current_period_end: null,
     });
 
-    // Recompute access
     await supabase.rpc('recompute_user_product_access', { p_user_id: user.id });
 
     return NextResponse.json({ success: true, redirect: '/dashboard' });
@@ -74,6 +71,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Stripe price not configured for this plan' }, { status: 400 });
     }
 
+    // Validate coupon (if provided) and resolve its Stripe promotion_code id.
+    let stripePromotionCodeId: string | null = null;
+    let couponId: string | null = null;
+    if (couponCode && couponCode.trim().length > 0) {
+      const { data: validationData, error: validationError } = await supabase.rpc('validate_coupon', {
+        p_code: couponCode.trim(),
+        p_plan_id: plan.id,
+        p_billing_interval: billingInterval,
+        p_user_id: user.id,
+      });
+      if (validationError) {
+        console.error('validate_coupon error:', validationError);
+        return NextResponse.json({ error: 'Error validando cupón' }, { status: 500 });
+      }
+      const row = Array.isArray(validationData) ? validationData[0] : validationData;
+      if (!row || !row.valid) {
+        return NextResponse.json(
+          { error: `Cupón inválido: ${row?.reason ?? 'desconocido'}` },
+          { status: 400 }
+        );
+      }
+      stripePromotionCodeId = row.stripe_promotion_code_id;
+      couponId = row.coupon_id;
+    }
+
     // Get or create Stripe customer
     let stripeCustomerId: string | undefined;
     const { data: existingSub } = await supabase
@@ -84,11 +106,11 @@ export async function POST(request: NextRequest) {
       .limit(1)
       .single();
 
+    const stripe = getStripe();
     if (existingSub?.stripe_customer_id) {
       stripeCustomerId = existingSub.stripe_customer_id;
     } else {
-      const stripe = getStripe();
-    const customer = await stripe.customers.create({
+      const customer = await stripe.customers.create({
         email: user.email!,
         metadata: { supabase_user_id: user.id, clinic_id: clinicId ?? '' },
       });
@@ -96,7 +118,7 @@ export async function POST(request: NextRequest) {
     }
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:9002';
-    const session = await getStripe().checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: stripeCustomerId,
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -109,11 +131,22 @@ export async function POST(request: NextRequest) {
           plan_slug: planSlug,
           clinic_id: clinicId ?? '',
           billing_interval: billingInterval,
+          coupon_id: couponId ?? '',
         },
       },
       success_url: `${siteUrl}/dashboard?payment=success`,
       cancel_url: `${siteUrl}/pricing?payment=canceled`,
-    });
+    };
+
+    if (stripePromotionCodeId) {
+      sessionParams.discounts = [{ promotion_code: stripePromotionCodeId }];
+    } else {
+      // allow_promotion_codes lets the user paste a code directly in Stripe Checkout
+      // even if they didn't pre-enter one in our UI.
+      sessionParams.allow_promotion_codes = true;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return NextResponse.json({ url: session.url });
   }

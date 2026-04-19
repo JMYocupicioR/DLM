@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -126,8 +126,9 @@ const initialData: FormData = {
   acceptPrivacidad: false,
 };
 
-export default function RegistroEmpresaPage() {
+function RegistroEmpresaContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const { toast } = useToast();
 
@@ -135,6 +136,17 @@ export default function RegistroEmpresaPage() {
   const [formData, setFormData] = useState<FormData>(initialData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
+
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan && plans.some((p) => p.slug === plan)) {
+      setFormData((prev) => ({ ...prev, planSlug: plan }));
+    }
+    const billing = searchParams.get('billing');
+    if (billing === 'annual') setBillingInterval('annual');
+    else if (billing === 'monthly') setBillingInterval('monthly');
+  }, [searchParams]);
 
   const update = (field: keyof FormData, value: string | boolean | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -258,7 +270,7 @@ export default function RegistroEmpresaPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             planSlug: formData.planSlug,
-            billingInterval: 'monthly',
+            billingInterval,
             processor: 'stripe',
           }),
         });
@@ -714,5 +726,19 @@ export default function RegistroEmpresaPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function RegistroEmpresaPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
+          Cargando registro…
+        </div>
+      }
+    >
+      <RegistroEmpresaContent />
+    </Suspense>
   );
 }

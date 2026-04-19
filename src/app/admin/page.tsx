@@ -13,8 +13,8 @@ import {
 import DeepLuxLogo from '@/components/deeplux-logo';
 import { formatMXN } from '@/lib/utils';
 import { PLAN_BADGES } from '@/lib/constants';
-import { approveLicenseVerification, rejectLicenseVerification } from './actions';
 import { VerificationActions } from './verification-actions';
+import { subscriptionStatusLabel } from '@/lib/subscription-status';
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
     { label: 'Trials activos', value: trialSubs ?? 0, icon: Clock, color: 'text-yellow-400' },
     { label: 'Pago pendiente (past_due)', value: pastDueSubs ?? 0, icon: AlertTriangle, color: 'text-red-400' },
     { label: 'Verificaciones pendientes', value: pendingVerifications ?? 0, icon: CheckCircle2, color: 'text-orange-400' },
-    { label: 'MRR este mes (MXN)', value: formatMXN(mrr), icon: DollarSign, color: 'text-emerald-400', isString: true },
+    { label: 'Ingresos del mes (MXN)', value: formatMXN(mrr), icon: DollarSign, color: 'text-emerald-400', isString: true },
     { label: 'Tasa de verificación', value: `${totalUsers ? Math.round(((verifiedUsers ?? 0) / totalUsers) * 100) : 0}%`, icon: TrendingUp, color: 'text-purple-400', isString: true },
   ];
 
@@ -87,9 +87,14 @@ export default async function AdminDashboardPage() {
               <Badge variant="outline" className="ml-2 text-xs">Staff only</Badge>
             </div>
           </div>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard"><ChevronRight className="h-4 w-4 mr-1 rotate-180" />Mi cuenta</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/admin/cupones">Cupones</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/dashboard"><ChevronRight className="h-4 w-4 mr-1 rotate-180" />Mi cuenta</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -189,7 +194,7 @@ export default async function AdminDashboardPage() {
                               variant={sub.status === 'active' ? 'default' : sub.status === 'trialing' ? 'secondary' : 'destructive'}
                               className="text-xs"
                             >
-                              {sub.status}
+                              {subscriptionStatusLabel(sub.status)}
                             </Badge>
                             <p className="text-xs text-muted-foreground mt-0.5">
                               {formatMXN(planData?.price_mxn_cents ?? 0)}/mes
@@ -207,17 +212,19 @@ export default async function AdminDashboardPage() {
 
         {/* Past Due Warning */}
         {(pastDueSubs ?? 0) > 0 && (
-          <Card className="mt-6 border-red-500/40 bg-red-500/5">
-            <CardContent className="p-4 flex items-center gap-4">
+          <Card id="past-due-alert" className="mt-6 border-red-500/40 bg-red-500/5 scroll-mt-20">
+            <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <AlertTriangle className="h-6 w-6 text-red-400 flex-shrink-0" />
               <div className="flex-grow">
-                <p className="font-medium text-foreground">{pastDueSubs} suscripción(es) en estado past_due</p>
+                <p className="font-medium text-foreground">
+                  {pastDueSubs} suscripción(es) con pago pendiente
+                </p>
                 <p className="text-sm text-muted-foreground">
-                  Estas suscripciones tienen pagos fallidos y están en grace period. Si no se resuelven, pasarán a modo read-only y luego se suspenderán.
+                  Estas suscripciones tienen pagos fallidos y están en periodo de gracia. Revisa Stripe o el procesador correspondiente.
                 </p>
               </div>
-              <Button size="sm" variant="outline" className="border-red-400/40 text-red-400 flex-shrink-0">
-                Ver detalles
+              <Button size="sm" variant="outline" className="border-red-400/40 text-red-400 flex-shrink-0 cursor-pointer" asChild>
+                <Link href="/admin#past-due-alert">Ver esta alerta</Link>
               </Button>
             </CardContent>
           </Card>

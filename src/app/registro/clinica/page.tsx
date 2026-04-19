@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -88,8 +88,9 @@ const initialData: ClinicFormData = {
   acceptPrivacidad: false,
 };
 
-export default function RegistroClinicaPage() {
+function RegistroClinicaContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const { toast } = useToast();
 
@@ -97,6 +98,17 @@ export default function RegistroClinicaPage() {
   const [formData, setFormData] = useState<ClinicFormData>(initialData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<ClinicFormData>>({});
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
+
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan && clinicPlans.some((p) => p.slug === plan)) {
+      setFormData((prev) => ({ ...prev, planSlug: plan }));
+    }
+    const billing = searchParams.get('billing');
+    if (billing === 'annual') setBillingInterval('annual');
+    else if (billing === 'monthly') setBillingInterval('monthly');
+  }, [searchParams]);
 
   const update = (field: keyof ClinicFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -198,7 +210,7 @@ export default function RegistroClinicaPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             planSlug: formData.planSlug,
-            billingInterval: 'monthly',
+            billingInterval,
             processor: 'stripe',
             subscriber_type: 'clinic',
           }),
@@ -569,5 +581,19 @@ export default function RegistroClinicaPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function RegistroClinicaPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
+          Cargando registro…
+        </div>
+      }
+    >
+      <RegistroClinicaContent />
+    </Suspense>
   );
 }
