@@ -20,7 +20,7 @@ ON CONFLICT (slug) DO NOTHING;
 -- ─────────────────────────────────────────────
 INSERT INTO public.products (slug, name, description, short_description, target_audience, app_url, color_hex, sort_order) VALUES
   ('escalas-dlm',    'Escalas-DLM',       'Repositorio completo de escalas médicas y herramientas de evaluación clínica para diagnóstico preciso.', 'Escalas médicas y evaluaciones', 'both', 'https://www.escalas-dlm.com', '#41E2BA', 1),
-  ('expediente-dlm', 'Expediente-DLM',    'Sistema de expediente clínico electrónico seguro y eficiente para optimizar la gestión de pacientes.', 'Expediente clínico electrónico', 'both', 'https://expediente-dlm.netlify.app/', '#2E3192', 2),
+  ('expediente-dlm', 'Expediente-DLM',    'Sistema de expediente clínico electrónico seguro y eficiente para optimizar la gestión de pacientes.', 'Expediente clínico electrónico', 'both', 'https://expediente-dlm.com/', '#2E3192', 2),
   ('toxina-dlm',     'Toxina-DLM',        'Gestión especializada de aplicaciones de toxina botulínica: dosis, sitios de inyección y seguimiento.', 'Gestión de toxina botulínica', 'both', NULL, '#6C63FF', 3),
   ('cognitivapp-dlm','CognitivApp-DLM',   'Plataforma innovadora para rehabilitación cognitiva, diseñada para mejorar la función cerebral de pacientes.', 'Rehabilitación cognitiva', 'both', NULL, '#FF6B6B', 4),
   ('physio-dlm',     'Physio-DLM',        'Telerehabilitación con videos, seguimiento en línea y cursos de educación médica continua.', 'Telerehabilitación y CME', 'both', NULL, '#FFA600', 5),

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@/lib/supabase/server';
-import { getStripe } from '@/lib/stripe';
+import { getSiteUrl, getStripe } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -117,12 +117,19 @@ export async function POST(request: NextRequest) {
       stripeCustomerId = customer.id;
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:9002';
+    const siteUrl = getSiteUrl();
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       customer: stripeCustomerId,
       mode: 'subscription',
-      payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
+      metadata: {
+        supabase_user_id: user.id,
+        plan_id: plan.id,
+        plan_slug: planSlug,
+        clinic_id: clinicId ?? '',
+        billing_interval: billingInterval,
+        coupon_id: couponId ?? '',
+      },
       subscription_data: {
         trial_period_days: plan.trial_days ?? 14,
         metadata: {

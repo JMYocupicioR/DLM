@@ -9,7 +9,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "stripe:verify:connection": "node scripts/stripe/verify-connection.mjs",
+    "stripe:verify:webhook": "node scripts/stripe/send-signed-webhook.mjs",
+    "stripe:test:checkout": "node scripts/stripe/create-test-checkout-session.mjs"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

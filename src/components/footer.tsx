@@ -6,6 +6,7 @@ import DeepLuxLogo from '@/components/deeplux-logo';
 
 const footerLinks = {
   productos: [
+    { label: 'Conexiones', href: '/conexiones' },
     { label: 'DeepLux MED', href: '/med' },
     { label: 'Portafolio', href: '/portafolio' },
     { label: 'DeepLux Bio', href: '/bio' },

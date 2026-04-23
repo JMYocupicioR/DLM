@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
-}
+import { getStripe } from '@/lib/stripe';
 
 // This route is called by a cron job (e.g., Vercel Cron or GitHub Actions).
 // It reconciles the local subscription state with the actual state in Stripe/Conekta.

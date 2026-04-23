@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Menu, X, ChevronDown, Stethoscope as StethIcon, Building2, Briefcase, Layers, Printer, HeartPulse } from 'lucide-react';
+import { Menu, X, ChevronDown, Stethoscope as StethIcon, Building2, Briefcase, Layers, Printer, HeartPulse, Handshake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -36,6 +36,13 @@ const solutionsMenu = [
 ];
 
 const productsMenu = [
+  {
+    label: 'Conexiones',
+    description: 'Opciones para médicos y empresarios',
+    icon: Handshake,
+    href: '/conexiones',
+    badge: 'Nuevo',
+  },
   {
     label: 'DeepLux MED',
     description: 'La suite médica completa',
@@ -168,6 +175,9 @@ export default function Header() {
           </div>
 
           <Button variant="ghost" size="sm" asChild>
+            <Link href="/conexiones">Conexiones</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
             <Link href="/pricing">Precios</Link>
           </Button>
           <Button
@@ -240,6 +250,13 @@ export default function Header() {
             ))}
           </div>
           <div className="border-t border-border/40 pt-2 mt-2 space-y-1">
+            <Link
+              href="/conexiones"
+              className="block px-2 py-2.5 text-sm text-foreground hover:text-accent"
+              onClick={() => setMenuOpen(false)}
+            >
+              Conexiones
+            </Link>
             <Link
               href="/pricing"
               className="block px-2 py-2.5 text-sm text-foreground hover:text-accent"

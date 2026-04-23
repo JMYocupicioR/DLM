@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServiceClient } from '@/lib/supabase/server';
 import { insertUserNotification } from '@/lib/notifications-server';
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
-}
+import { getStripe, getStripeWebhookSecret } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
@@ -16,12 +13,13 @@ export async function POST(request: NextRequest) {
   }
 
   const stripe = getStripe();
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+  const webhookSecret = getStripeWebhookSecret();
 
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
-  } catch {
+  } catch (error) {
+    console.error('Invalid Stripe signature:', error);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -89,7 +87,7 @@ async function handleStripeEvent(
       const session = event.data.object as any;
       if (session.mode !== 'subscription') break;
 
-      const meta = session.subscription_data?.metadata ?? {};
+      const meta = session.metadata ?? {};
       const userId = meta.supabase_user_id;
       const planId = meta.plan_id;
       const billingInterval = meta.billing_interval ?? 'monthly';

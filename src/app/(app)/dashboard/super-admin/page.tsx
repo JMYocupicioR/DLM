@@ -11,6 +11,7 @@ import { formatMXN } from '@/lib/utils';
 import { PLAN_BADGES } from '@/lib/constants';
 import { getUserRole, getDashboardRoute } from '@/lib/user-role';
 import { subscriptionStatusLabel, invoiceStatusLabel } from '@/lib/subscription-status';
+import { ServiceRequestsPanel, type ServiceRequest } from './service-requests-panel';
 
 export default async function SuperAdminDashboardPage() {
   const supabase = await createClient();
@@ -35,6 +36,7 @@ export default async function SuperAdminDashboardPage() {
     { data: mrrInvoices },
     { data: recentInvoices },
     { data: mrrSubs },
+    { data: serviceRequests },
   ] = await Promise.all([
     service.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active'),
     service.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'trialing'),
@@ -63,6 +65,11 @@ export default async function SuperAdminDashboardPage() {
       .from('subscriptions')
       .select('billing_interval, subscription_plans(price_mxn_cents, price_mxn_annual_cents)')
       .in('status', ['active', 'trialing']),
+    service
+      .from('service_requests')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50),
   ]);
 
   const clinicIds = clinicIdsFromSubs(activeClinicSubs);
@@ -222,6 +229,11 @@ export default async function SuperAdminDashboardPage() {
               )}
             </CardContent>
           </Card>
+        </div>
+
+        {/* Solicitudes de servicios tecnológicos */}
+        <div className="mb-6">
+          <ServiceRequestsPanel initialRequests={(serviceRequests ?? []) as ServiceRequest[]} />
         </div>
 
         {/* Pagos recientes */}

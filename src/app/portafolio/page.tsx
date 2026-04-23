@@ -32,7 +32,7 @@ const products = [
       'Auditoría en tiempo real COFEPRIS',
       'Exportación PDF con identidad institucional',
     ],
-    link: 'https://expediente-dlm.netlify.app/',
+    link: 'https://expediente-dlm.com/',
     connects: ['Escalas-DLM', 'Toxina-DLM'],
   },
   {

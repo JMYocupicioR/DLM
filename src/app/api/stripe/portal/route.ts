@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { createClient } from '@/lib/supabase/server';
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
-}
+import { getSiteUrl, getStripe } from '@/lib/stripe';
 
 /**
  * POST /api/stripe/portal
@@ -37,7 +33,7 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe();
     const session = await stripe.billingPortal.sessions.create({
       customer: sub.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/suscripcion`,
+      return_url: `${getSiteUrl()}/suscripcion`,
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {

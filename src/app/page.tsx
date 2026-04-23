@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,9 +12,14 @@ import {
   ArrowRight, FileText, BrainCog, Scale, MonitorPlay, Syringe, Printer,
   Shield, Users, Zap, Stethoscope, Building2, Briefcase, CheckCircle2,
   Star, ChevronDown, ChevronUp, Lock, Receipt, HeartPulse, FlaskConical,
-  TrendingUp, UserCheck, BadgeCheck, Clock
+  TrendingUp, UserCheck, BadgeCheck, Clock, Activity, ClipboardList, ExternalLink,
+  Code2, Globe, Smartphone, MessageSquare, Handshake, Rocket, GraduationCap, BookOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+function isExternalHref(href: string) {
+  return href.startsWith('http://') || href.startsWith('https://');
+}
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -45,7 +51,7 @@ const heroContent: Record<string, { headline: string; sub: string; cta: string; 
 };
 
 const stats = [
-  { value: '6',         label: 'Apps clínicas integradas' },
+  { value: '8',         label: 'Apps clínicas integradas' },
   { value: 'NOM-024',   label: 'Cumplimiento SSA certificado' },
   { value: '14 días',   label: 'Prueba gratuita, sin tarjeta' },
   { value: 'TLS 256',   label: 'Cifrado de grado médico' },
@@ -121,8 +127,8 @@ const steps = [
   {
     number: '03',
     icon: HeartPulse,
-    title: 'Accede a las 6 apps con una sola cuenta',
-    description: 'Un solo login para todo el ecosistema. Expediente, escalas, toxina botulínica, rehabilitación cognitiva, fisioterapia y manufactura 3D. Todo conectado.',
+    title: 'Accede a 8 apps con una sola cuenta',
+    description: 'Un solo login para todo el ecosistema: expediente, escalas, toxina botulínica, neurorrehabilitación, educación en ENMG, simulacros clínicos y más. Todo conectado.',
   },
 ];
 
@@ -134,9 +140,10 @@ const apps = [
     tagline: 'NOM-024 compliance garantizado',
     description: 'Expediente clínico electrónico con cumplimiento legal, firma digital y búsqueda inteligente.',
     status: 'Disponible' as const,
-    link: 'https://expediente-dlm.netlify.app/',
+    link: 'https://expediente-dlm.com/',
     featured: true,
     highlights: ['Firma digital', 'Búsqueda IA', 'NOM-024'],
+    screenshot: null as string | null,
   },
   {
     icon: Scale,
@@ -148,6 +155,7 @@ const apps = [
     link: 'https://www.escalas-dlm.com',
     featured: false,
     highlights: [],
+    screenshot: null as string | null,
   },
   {
     icon: Syringe,
@@ -159,6 +167,7 @@ const apps = [
     link: 'https://toxina.netlify.app/',
     featured: false,
     highlights: [],
+    screenshot: null as string | null,
   },
   {
     icon: BrainCog,
@@ -170,6 +179,60 @@ const apps = [
     link: 'https://cognitivapp.netlify.app/',
     featured: false,
     highlights: [],
+    screenshot: null as string | null,
+  },
+  {
+    icon: Activity,
+    title: 'ENMG EducativApp DLM',
+    heroShortTitle: 'ENMG EducativApp',
+    color: '#0EA5E9',
+    tagline: 'Enseñanza de electromiografía con casos clínicos',
+    description: 'App educativa para entrenar razonamiento en electrodiagnóstico con escenarios interactivos de práctica clínica.',
+    status: 'Disponible' as const,
+    link: 'https://enmgeducativappdlm.netlify.app/',
+    featured: false,
+    highlights: [],
+    screenshot: '/enmg-educativapp.png',
+  },
+  {
+    icon: ClipboardList,
+    title: 'Rehabi Quiz',
+    color: '#F97316',
+    tagline: 'Simulacro de cuestionarios médicos para residentes',
+    description: 'Más de 300 preguntas por especialidad para Rehabilitación, Ortopedia, Pediatría y Neurofisiología clínica.',
+    status: 'Disponible' as const,
+    link: 'https://rehabiquiz.netlify.app/',
+    featured: false,
+    highlights: [],
+    screenshot: '/rehabi-quiz.png',
+  },
+  {
+    icon: GraduationCap,
+    title: 'Aula médica DeepLux',
+    heroShortTitle: 'Aula médica',
+    color: '#8B5CF6',
+    tagline: 'Residentes, escalas e investigación',
+    description:
+      'Ruta para médicos en formación: expediente NOM-024, motor de escalas para tesis y exportación para investigación.',
+    status: 'Disponible' as const,
+    link: '/med',
+    featured: false,
+    highlights: [],
+    screenshot: null as string | null,
+  },
+  {
+    icon: BookOpen,
+    title: 'Guías clínicas DeepLuxMed',
+    heroShortTitle: 'Guías DeepLuxMed',
+    color: '#C026D3',
+    tagline: 'Artículos y guías por especialidad',
+    description:
+      'Contenido educativo sobre escalas clínicas, interpretación y uso en rehabilitación y otras especialidades.',
+    status: 'Disponible' as const,
+    link: 'https://www.deepluxmed.mx/indexescalas',
+    featured: false,
+    highlights: [],
+    screenshot: null as string | null,
   },
   {
     icon: MonitorPlay,
@@ -181,6 +244,7 @@ const apps = [
     link: null,
     featured: false,
     highlights: [],
+    screenshot: null as string | null,
   },
   {
     icon: Printer,
@@ -192,8 +256,12 @@ const apps = [
     link: null,
     featured: false,
     highlights: [],
+    screenshot: null as string | null,
   },
 ];
+
+/** Apps shown in the hero dashboard mockup (3×3); omit heavy / secondary tiles for layout. */
+const heroDashboardApps = apps.filter((a) => a.title !== 'Portal Manufactura 3D');
 
 const statusStyles: Record<'Disponible' | 'Nuevo' | 'Próximamente', { bg: string; text: string; border: string }> = {
   Disponible: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', border: 'border-emerald-500/30' },
@@ -288,6 +356,45 @@ const faqs = [
   },
 ];
 
+const customTechServices = [
+  {
+    title: 'Landing page profesional',
+    icon: Globe,
+    description: 'Sitios .com personalizados para médicos, clínicas y consultorios con enfoque en autoridad digital y captación de pacientes.',
+    deliverables: ['Dominio personalizado', 'Diseño responsive premium', 'Formulario de contacto con WhatsApp'],
+  },
+  {
+    title: 'App a la medida',
+    icon: Smartphone,
+    description: 'Aplicaciones personalizadas para procesos clínicos, administrativos o educativos, según las necesidades reales de cada empresa de salud.',
+    deliverables: ['Análisis funcional del negocio', 'MVP priorizado', 'Escalabilidad para crecimiento futuro'],
+  },
+  {
+    title: 'Automatización y software web',
+    icon: Code2,
+    description: 'Desarrollo de paneles, portales internos y automatizaciones para optimizar operación, seguimiento y productividad.',
+    deliverables: ['Dashboard por roles', 'Flujos automatizados', 'Integración con herramientas existentes'],
+  },
+];
+
+const customTechProfiles = [
+  {
+    name: 'Especialista en Web Médica',
+    focus: 'Landing pages y páginas .com para profesionales de la salud',
+    metric: '+120 proyectos de salud digital',
+  },
+  {
+    name: 'Arquitecto de Apps Personalizadas',
+    focus: 'Apps de gestión clínica, citas, seguimiento y educación médica',
+    metric: 'Soluciones desde MVP hasta enterprise',
+  },
+  {
+    name: 'Diseñador UX para Salud',
+    focus: 'Experiencias enfocadas en pacientes, médicos y equipos administrativos',
+    metric: 'Diseño centrado en confianza y conversión',
+  },
+];
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Home() {
@@ -296,6 +403,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const hero = heroContent[activeAudience];
+  const availableApps = apps.filter((app) => app.status !== 'Próximamente').length;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -329,7 +437,7 @@ export default function Home() {
                   <span className="absolute inset-0 rounded-full bg-accent animate-ping opacity-60" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
                 </span>
-                Toxina-DLM y CognitivApp-DLM ya están disponibles
+                ENMG EducativApp y Rehabi Quiz ya están disponibles
                 <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -416,29 +524,64 @@ export default function Home() {
                     </div>
 
                     <div className="grid grid-cols-3 gap-2">
-                      {apps.slice(0, 6).map(({ icon: AppIcon, title, color, status }, i) => (
-                        <div
-                          key={title}
-                          className={cn(
-                            'aspect-square rounded-xl flex flex-col items-center justify-center gap-1.5 border border-border/40 text-center px-2 relative',
-                            status === 'Próximamente' ? 'bg-muted/30 opacity-60' : 'bg-background/60'
-                          )}
-                          style={i === 0 ? { animationDelay: '0s' } : { animationDelay: `${i * 0.5}s` }}
-                        >
-                          {status === 'Nuevo' && (
-                            <span className="absolute top-1 right-1 text-[8px] font-bold px-1 rounded bg-accent text-accent-foreground">NUEVO</span>
-                          )}
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center"
-                            style={{ backgroundColor: `${color}30` }}
-                          >
-                            <AppIcon className="h-4 w-4" style={{ color }} />
-                          </div>
-                          <p className="text-[9px] font-medium text-foreground leading-tight">
-                            {title.replace('-DLM', '')}
-                          </p>
-                        </div>
-                      ))}
+                      {heroDashboardApps.map((app, i) => {
+                        const { icon: AppIcon, title, color, status, link } = app;
+                        const label =
+                          'heroShortTitle' in app && typeof app.heroShortTitle === 'string'
+                            ? app.heroShortTitle
+                            : title.replace('-DLM', '');
+                        const isClickable = Boolean(link) && status !== 'Próximamente';
+                        const tileClass = cn(
+                          'aspect-square rounded-xl flex flex-col items-center justify-center gap-1.5 border text-center px-2 relative transition-colors duration-150',
+                          status === 'Próximamente' ? 'bg-muted/30 opacity-60 border-border/40' : 'bg-background/60 border-border/40',
+                          isClickable &&
+                            'hover:border-accent/50 hover:bg-accent/5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-card'
+                        );
+                        const delayStyle = i === 0 ? { animationDelay: '0s' } : { animationDelay: `${i * 0.5}s` };
+                        const inner = (
+                          <>
+                            {status === 'Nuevo' && (
+                              <span className="absolute top-1 right-1 text-[8px] font-bold px-1 rounded bg-accent text-accent-foreground">
+                                NUEVO
+                              </span>
+                            )}
+                            <div
+                              className="w-8 h-8 rounded-lg flex items-center justify-center pointer-events-none"
+                              style={{ backgroundColor: `${color}30` }}
+                            >
+                              <AppIcon className="h-4 w-4" style={{ color }} />
+                            </div>
+                            <p className="text-[9px] font-medium text-foreground leading-tight pointer-events-none">{label}</p>
+                          </>
+                        );
+                        if (!isClickable || !link) {
+                          return (
+                            <div key={title} className={tileClass} style={delayStyle}>
+                              {inner}
+                            </div>
+                          );
+                        }
+                        if (isExternalHref(link)) {
+                          return (
+                            <a
+                              key={title}
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={tileClass}
+                              style={delayStyle}
+                              aria-label={`Abrir ${title} en una pestaña nueva`}
+                            >
+                              {inner}
+                            </a>
+                          );
+                        }
+                        return (
+                          <Link key={title} href={link} className={tileClass} style={delayStyle} aria-label={`Ir a ${title}`}>
+                            {inner}
+                          </Link>
+                        );
+                      })}
                     </div>
 
                     <div className="mt-3 pt-3 border-t border-border/40 flex items-center justify-between">
@@ -616,7 +759,7 @@ export default function Home() {
                 Ecosistema completo
               </Badge>
               <h2 className="font-headline text-3xl md:text-4xl font-bold text-foreground">
-                6 aplicaciones. Una sola cuenta.
+                {availableApps}+ aplicaciones activas. Una sola cuenta.
               </h2>
               <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
                 Desde el expediente clínico hasta la manufactura de prótesis. Todo diseñado para el flujo de trabajo médico real.
@@ -625,11 +768,14 @@ export default function Home() {
 
             {/* Bento Grid: featured + small cards */}
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4 max-w-6xl mx-auto auto-rows-fr">
-              {apps.map(({ icon: AppIcon, title, color, tagline, description, status, link, featured, highlights }) => {
+              {apps.map(({ icon: AppIcon, title, color, tagline, description, status, link, featured, highlights, screenshot }) => {
                 const sstyle = statusStyles[status];
-                const CardWrapper: React.ElementType = link ? 'a' : 'div';
+                const external = Boolean(link && isExternalHref(link));
+                const CardWrapper: React.ElementType = link ? (external ? 'a' : Link) : 'div';
                 const wrapperProps = link
-                  ? { href: link, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Abrir ${title}` }
+                  ? external
+                    ? { href: link, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Abrir ${title}` }
+                    : { href: link, 'aria-label': `Ir a ${title}` }
                   : {};
 
                 return (
@@ -654,6 +800,24 @@ export default function Home() {
                     />
 
                     <div className="relative flex flex-col h-full">
+                      {screenshot && (
+                        <div className="relative w-full mb-4 overflow-hidden rounded-xl border border-border/60 bg-muted/40">
+                          <Image
+                            src={screenshot}
+                            alt={`Vista previa de ${title}`}
+                            width={1280}
+                            height={720}
+                            className="h-36 w-full object-cover object-top"
+                          />
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-2">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-white/90">
+                              Captura real de la app
+                              <ExternalLink className="h-3 w-3" />
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex items-start justify-between mb-4">
                         <div
                           className={cn(
@@ -706,7 +870,7 @@ export default function Home() {
 
                       {link ? (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-accent mt-4 group-hover:gap-2 transition-all">
-                          Abrir app
+                          Abrir sitio oficial
                           <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                         </span>
                       ) : (
@@ -900,6 +1064,88 @@ export default function Home() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Servicios de Tecnología personalizadas ───────────────────── */}
+        <section id="servicios-tecnologia-personalizadas" className="py-24">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-14 max-w-3xl mx-auto">
+              <Badge variant="secondary" className="mb-3">
+                <Rocket className="h-3.5 w-3.5 mr-1.5" />
+                Nuevo servicio exclusivo DeepLux.org
+              </Badge>
+              <h2 className="font-headline text-3xl md:text-4xl font-bold text-foreground">
+                Servicios de Tecnología personalizadas
+              </h2>
+              <p className="text-muted-foreground mt-3">
+                Tu versión especializada de Fiverr para el sector salud: conecta con profesionales en diseño y desarrollo web para crear soluciones personalizadas para tu empresa médica.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-8">
+              {customTechServices.map(({ title, icon: ServiceIcon, description, deliverables }) => (
+                <Card key={title} className="border-border/60 bg-card">
+                  <CardContent className="p-6 h-full flex flex-col">
+                    <div className="w-12 h-12 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center mb-4">
+                      <ServiceIcon className="h-6 w-6 text-accent" />
+                    </div>
+                    <h3 className="font-headline text-lg font-bold text-foreground mb-2">{title}</h3>
+                    <p className="text-sm text-muted-foreground mb-5 flex-grow">{description}</p>
+                    <ul className="space-y-2">
+                      {deliverables.map((deliverable) => (
+                        <li key={deliverable} className="flex items-start gap-2 text-sm text-foreground/85">
+                          <CheckCircle2 className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                          {deliverable}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="rounded-2xl border border-border/60 bg-card/60 p-6 md:p-8 max-w-6xl mx-auto">
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="font-headline text-2xl font-bold text-foreground">
+                    Perfiles profesionales disponibles
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Cada profesional tendrá su propio perfil, portafolio y oferta de servicios personalizados para negocios de salud.
+                  </p>
+                </div>
+                <Badge variant="outline" className="w-fit">
+                  <Handshake className="h-3.5 w-3.5 mr-1.5" />
+                  Conexión directa cliente-profesional
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {customTechProfiles.map(({ name, focus, metric }) => (
+                  <div key={name} className="rounded-xl border border-border/60 bg-background/70 p-5">
+                    <p className="text-sm font-semibold text-foreground mb-1">{name}</p>
+                    <p className="text-xs text-muted-foreground mb-3">{focus}</p>
+                    <p className="text-xs text-accent font-medium">{metric}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Button asChild>
+                  <a href="mailto:hola@deeplux.org?subject=Quiero%20una%20soluci%C3%B3n%20tecnol%C3%B3gica%20personalizada">
+                    Solicitar solución personalizada
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button variant="outline" asChild>
+                  <a href="mailto:JM.Yocupicio.R.@gmail.com?subject=Quiero%20publicar%20mis%20servicios%20en%20DeepLux">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Quiero ofrecer mis servicios
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
